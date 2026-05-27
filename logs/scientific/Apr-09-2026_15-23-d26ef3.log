@@ -1,0 +1,554 @@
+Thu 09 Apr 2026 15:23:51 INFO  Device: cuda
+Thu 09 Apr 2026 15:23:51 INFO  Config: {'dataset': 'scientific', 'seed': 2020, 'reproducibility': True, 'log_dir': './logs', 'map_path': '.emb_map.json', 'semantic_emb_path': 'scientific_emb_256.npy', 'semantic_hidden_size': 256, 'code_num': 256, 'code_length': 4, 'epochs': 400, 'lr_rec': 0.005, 'lr_id': 0.0001, 'weight_decay': 0.05, 'id_vq_loss': 1, 'id_code_loss': 0, 'id_kl_loss': 0.0001, 'id_dec_cl_loss': 0.0003, 'rec_vq_loss': 0, 'rec_code_loss': 1, 'rec_kl_loss': 0.0001, 'rec_dec_cl_loss': 0.0003, 'cycle': 2, 'sim': 'cos', 'warmup_steps': 8000, 'batch_size': 512, 'eval_batch_size': 32, 'num_workers': 8, 'eval_step': 2, 'learner': 'AdamW', 'data_path': './dataset', 'lr_scheduler_type': 'cosine', 'gradient_accumulation_steps': 1, 'max_his_len': 50, 'early_stop': 15, 'metrics': 'recall@1,recall@5,ndcg@5,recall@10,ndcg@10', 'valid_metric': 'ndcg@10', 'max_length': 210, 'encoder_layers': 6, 'decoder_layers': 6, 'd_model': 128, 'd_ff': 512, 'num_heads': 4, 'd_kv': 64, 'dropout_rate': 0.1, 'activation_function': 'relu', 'feed_forward_proj': 'relu', 'num_beams': 20, 'alpha': 1, 'warm_epoch': 10, 'rqvae_path': './dataset/scientific/256-512-256-128.rqvae.pth', 'num_emb_list': [256, 256, 256], 'beta': 0.25, 'e_dim': 128, 'layers': [512, 256], 'vq_type': 'vq', 'dist': 'l2', 'tau': 0.07, 'kmeans_init': False, 'kmeans_iters': 100, 'dropout_prob': 0.0, 'bn': False, 'loss_type': 'mse', 'use_features': True, 'num_features': 256, 'item_feature_path': 'item_features.npy', 'device': device(type='cuda'), 'use_ddp': False, 'run_local_time': 'Apr-09-2026_15-23', 'save_path': './myckpt/scientific/Apr-09-2026_15-23-58109b', 'accelerator': <accelerate.accelerator.Accelerator object at 0x14fa2f163790>}
+Thu 09 Apr 2026 15:23:54 INFO  Loaded item features from ./dataset/scientific/item_features.npy
+Thu 09 Apr 2026 15:23:55 INFO  Model(
+  (model): T5ForConditionalGeneration(
+    (shared): Embedding(1, 128)
+    (encoder): T5Stack(
+      (embed_tokens): Embedding(1, 128)
+      (block): ModuleList(
+        (0): T5Block(
+          (layer): ModuleList(
+            (0): T5LayerSelfAttention(
+              (SelfAttention): T5Attention(
+                (q): Linear(in_features=128, out_features=256, bias=False)
+                (k): Linear(in_features=128, out_features=256, bias=False)
+                (v): Linear(in_features=128, out_features=256, bias=False)
+                (o): Linear(in_features=256, out_features=128, bias=False)
+                (relative_attention_bias): Embedding(32, 4)
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (1): T5LayerFF(
+              (DenseReluDense): T5DenseActDense(
+                (wi): Linear(in_features=128, out_features=512, bias=False)
+                (wo): Linear(in_features=512, out_features=128, bias=False)
+                (dropout): Dropout(p=0.1, inplace=False)
+                (act): ReLU()
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+        )
+        (1-5): 5 x T5Block(
+          (layer): ModuleList(
+            (0): T5LayerSelfAttention(
+              (SelfAttention): T5Attention(
+                (q): Linear(in_features=128, out_features=256, bias=False)
+                (k): Linear(in_features=128, out_features=256, bias=False)
+                (v): Linear(in_features=128, out_features=256, bias=False)
+                (o): Linear(in_features=256, out_features=128, bias=False)
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (1): T5LayerFF(
+              (DenseReluDense): T5DenseActDense(
+                (wi): Linear(in_features=128, out_features=512, bias=False)
+                (wo): Linear(in_features=512, out_features=128, bias=False)
+                (dropout): Dropout(p=0.1, inplace=False)
+                (act): ReLU()
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+        )
+      )
+      (final_layer_norm): T5LayerNorm()
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (decoder): T5Stack(
+      (embed_tokens): Embedding(1, 128)
+      (block): ModuleList(
+        (0): T5Block(
+          (layer): ModuleList(
+            (0): T5LayerSelfAttention(
+              (SelfAttention): T5Attention(
+                (q): Linear(in_features=128, out_features=256, bias=False)
+                (k): Linear(in_features=128, out_features=256, bias=False)
+                (v): Linear(in_features=128, out_features=256, bias=False)
+                (o): Linear(in_features=256, out_features=128, bias=False)
+                (relative_attention_bias): Embedding(32, 4)
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (1): T5LayerCrossAttention(
+              (EncDecAttention): T5Attention(
+                (q): Linear(in_features=128, out_features=256, bias=False)
+                (k): Linear(in_features=128, out_features=256, bias=False)
+                (v): Linear(in_features=128, out_features=256, bias=False)
+                (o): Linear(in_features=256, out_features=128, bias=False)
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (2): T5LayerFF(
+              (DenseReluDense): T5DenseActDense(
+                (wi): Linear(in_features=128, out_features=512, bias=False)
+                (wo): Linear(in_features=512, out_features=128, bias=False)
+                (dropout): Dropout(p=0.1, inplace=False)
+                (act): ReLU()
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+        )
+        (1-5): 5 x T5Block(
+          (layer): ModuleList(
+            (0): T5LayerSelfAttention(
+              (SelfAttention): T5Attention(
+                (q): Linear(in_features=128, out_features=256, bias=False)
+                (k): Linear(in_features=128, out_features=256, bias=False)
+                (v): Linear(in_features=128, out_features=256, bias=False)
+                (o): Linear(in_features=256, out_features=128, bias=False)
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (1): T5LayerCrossAttention(
+              (EncDecAttention): T5Attention(
+                (q): Linear(in_features=128, out_features=256, bias=False)
+                (k): Linear(in_features=128, out_features=256, bias=False)
+                (v): Linear(in_features=128, out_features=256, bias=False)
+                (o): Linear(in_features=256, out_features=128, bias=False)
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+            (2): T5LayerFF(
+              (DenseReluDense): T5DenseActDense(
+                (wi): Linear(in_features=128, out_features=512, bias=False)
+                (wo): Linear(in_features=512, out_features=128, bias=False)
+                (dropout): Dropout(p=0.1, inplace=False)
+                (act): ReLU()
+              )
+              (layer_norm): T5LayerNorm()
+              (dropout): Dropout(p=0.1, inplace=False)
+            )
+          )
+        )
+      )
+      (final_layer_norm): T5LayerNorm()
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (lm_head): Linear(in_features=128, out_features=1, bias=False)
+  )
+  (semantic_embedding): Embedding(25849, 256)
+  (token_embeddings): ModuleList(
+    (0-3): 4 x Embedding(256, 128)
+  )
+  (feature_adapter): MLPLayers(
+    (mlp_layers): Sequential(
+      (0): Dropout(p=0.0, inplace=False)
+      (1): Linear(in_features=256, out_features=128, bias=True)
+      (2): ReLU()
+      (3): Dropout(p=0.0, inplace=False)
+      (4): Linear(in_features=128, out_features=128, bias=True)
+    )
+  )
+  (enc_adapter): MLPLayers(
+    (mlp_layers): Sequential(
+      (0): Dropout(p=0.0, inplace=False)
+      (1): Linear(in_features=128, out_features=128, bias=True)
+    )
+  )
+  (dec_adapter): MLPLayers(
+    (mlp_layers): Sequential(
+      (0): Dropout(p=0.0, inplace=False)
+      (1): Linear(in_features=128, out_features=256, bias=True)
+    )
+  )
+)
+Thu 09 Apr 2026 15:23:55 INFO  RQVAE(
+  (encoder): MLPLayers(
+    (mlp_layers): Sequential(
+      (0): Dropout(p=0.0, inplace=False)
+      (1): Linear(in_features=256, out_features=512, bias=True)
+      (2): ReLU()
+      (3): Dropout(p=0.0, inplace=False)
+      (4): Linear(in_features=512, out_features=256, bias=True)
+      (5): ReLU()
+      (6): Dropout(p=0.0, inplace=False)
+      (7): Linear(in_features=256, out_features=128, bias=True)
+    )
+  )
+  (rq): ResidualVectorQuantizer(
+    (vq_layers): ModuleList(
+      (0-2): 3 x VectorQuantizer(
+        (embedding): Embedding(256, 128)
+      )
+    )
+  )
+  (decoder): MLPLayers(
+    (mlp_layers): Sequential(
+      (0): Dropout(p=0.0, inplace=False)
+      (1): Linear(in_features=128, out_features=256, bias=True)
+      (2): ReLU()
+      (3): Dropout(p=0.0, inplace=False)
+      (4): Linear(in_features=256, out_features=512, bias=True)
+      (5): ReLU()
+      (6): Dropout(p=0.0, inplace=False)
+      (7): Linear(in_features=512, out_features=256, bias=True)
+    )
+  )
+)
+Thu 09 Apr 2026 15:23:56 INFO  [Epoch -1] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/-1.pt Code balance 0.7718 Used code num of level 1: 256
+Thu 09 Apr 2026 15:23:56 INFO  [Epoch -1] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/-1.pt Code balance 0.9278 Used code num of level 2: 256
+Thu 09 Apr 2026 15:23:56 INFO  [Epoch -1] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/-1.pt Code balance 0.9414 Used code num of level 3: 256
+Thu 09 Apr 2026 15:23:56 INFO  [Epoch -1] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/-1.pt Code confilct {'Max': 63, 'Min': 1, 'Type': 25454, '%': 0.9848}
+Thu 09 Apr 2026 15:23:57 INFO  [Epoch -1] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 63
+Thu 09 Apr 2026 15:24:21 INFO  [Epoch 0] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/0.pt Code balance 0.7651 Used code num of level 1: 256
+Thu 09 Apr 2026 15:24:22 INFO  [Epoch 0] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/0.pt Code balance 0.9231 Used code num of level 2: 256
+Thu 09 Apr 2026 15:24:22 INFO  [Epoch 0] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/0.pt Code balance 0.9402 Used code num of level 3: 256
+Thu 09 Apr 2026 15:24:22 INFO  [Epoch 0] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/0.pt Code confilct {'Max': 55, 'Min': 1, 'Type': 25447, '%': 0.9845}
+Thu 09 Apr 2026 15:24:22 INFO  [Epoch 0] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 55
+Thu 09 Apr 2026 15:24:22 INFO  [Epoch 0] [time: 25.07s, train loss[('loss', 0.0049), ('vq_loss', 0.0049), ('code_loss', 5.5555), ('kl_loss', 0.0627), ('dec_cl_loss', 12.6612)]]
+Thu 09 Apr 2026 15:24:22 INFO  [Epoch 0] REC lr: [0.0] ID lr: [1.27e-05]
+Thu 09 Apr 2026 15:25:19 INFO  [Epoch 1] [time: 57.44s, train loss[('loss', 4.2298), ('kl_loss', 0.0562), ('code_loss', 4.2298), ('dec_cl_loss', 12.7592)]]
+Thu 09 Apr 2026 15:25:19 INFO  [Epoch 1] REC lr: [0.0003175] ID lr: [1.27e-05]
+Thu 09 Apr 2026 15:26:23 INFO  [Epoch 1] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/1.pt
+Thu 09 Apr 2026 15:26:23 INFO  [Epoch 1] Val Results: {'recall@1': 0.004805, 'recall@5': 0.012278, 'ndcg@5': 0.008481, 'recall@10': 0.016574, 'ndcg@10': 0.009878}
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/2.pt Code balance 0.7621 Used code num of level 1: 256
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/2.pt Code balance 0.9211 Used code num of level 2: 256
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/2.pt Code balance 0.9379 Used code num of level 3: 256
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/2.pt Code confilct {'Max': 62, 'Min': 1, 'Type': 25470, '%': 0.9854}
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 62
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] [time: 23.59s, train loss[('loss', 0.0048), ('vq_loss', 0.0048), ('code_loss', 3.6423), ('kl_loss', 0.0645), ('dec_cl_loss', 12.7515)]]
+Thu 09 Apr 2026 15:26:47 INFO  [Epoch 2] REC lr: [0.0003175] ID lr: [2.54e-05]
+Thu 09 Apr 2026 15:27:43 INFO  [Epoch 3] [time: 55.85s, train loss[('loss', 3.496), ('kl_loss', 0.0609), ('code_loss', 3.496), ('dec_cl_loss', 12.8053)]]
+Thu 09 Apr 2026 15:27:43 INFO  [Epoch 3] REC lr: [0.000635] ID lr: [2.54e-05]
+Thu 09 Apr 2026 15:28:47 INFO  [Epoch 3] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/3.pt
+Thu 09 Apr 2026 15:28:47 INFO  [Epoch 3] Val Results: {'recall@1': 0.005472, 'recall@5': 0.018751, 'ndcg@5': 0.011968, 'recall@10': 0.029872, 'ndcg@10': 0.015549}
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/4.pt Code balance 0.7559 Used code num of level 1: 256
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/4.pt Code balance 0.9084 Used code num of level 2: 256
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/4.pt Code balance 0.9323 Used code num of level 3: 256
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/4.pt Code confilct {'Max': 56, 'Min': 1, 'Type': 25461, '%': 0.985}
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 56
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] [time: 22.43s, train loss[('loss', 0.0047), ('vq_loss', 0.0047), ('code_loss', 3.279), ('kl_loss', 0.0567), ('dec_cl_loss', 12.8082)]]
+Thu 09 Apr 2026 15:29:09 INFO  [Epoch 4] REC lr: [0.000635] ID lr: [3.8100000000000005e-05]
+Thu 09 Apr 2026 15:30:07 INFO  [Epoch 5] [time: 57.92s, train loss[('loss', 3.2467), ('kl_loss', 0.0478), ('code_loss', 3.2467), ('dec_cl_loss', 12.8053)]]
+Thu 09 Apr 2026 15:30:07 INFO  [Epoch 5] REC lr: [0.0009525] ID lr: [3.8100000000000005e-05]
+Thu 09 Apr 2026 15:31:10 INFO  [Epoch 5] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/5.pt
+Thu 09 Apr 2026 15:31:10 INFO  [Epoch 5] Val Results: {'recall@1': 0.006472, 'recall@5': 0.02081, 'ndcg@5': 0.01358, 'recall@10': 0.032872, 'ndcg@10': 0.017465}
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/6.pt Code balance 0.7485 Used code num of level 1: 256
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/6.pt Code balance 0.8959 Used code num of level 2: 256
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/6.pt Code balance 0.9244 Used code num of level 3: 256
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/6.pt Code confilct {'Max': 47, 'Min': 1, 'Type': 25462, '%': 0.9851}
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 47
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] [time: 22.89s, train loss[('loss', 0.0045), ('vq_loss', 0.0045), ('code_loss', 3.0305), ('kl_loss', 0.0411), ('dec_cl_loss', 12.5984)]]
+Thu 09 Apr 2026 15:31:33 INFO  [Epoch 6] REC lr: [0.0009525] ID lr: [5.08e-05]
+Thu 09 Apr 2026 15:32:30 INFO  [Epoch 7] [time: 57.03s, train loss[('loss', 3.1032), ('kl_loss', 0.0341), ('code_loss', 3.1032), ('dec_cl_loss', 12.7009)]]
+Thu 09 Apr 2026 15:32:30 INFO  [Epoch 7] REC lr: [0.00127] ID lr: [5.08e-05]
+Thu 09 Apr 2026 15:33:34 INFO  [Epoch 7] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/7.pt
+Thu 09 Apr 2026 15:33:34 INFO  [Epoch 7] Val Results: {'recall@1': 0.006629, 'recall@5': 0.022124, 'ndcg@5': 0.014248, 'recall@10': 0.035128, 'ndcg@10': 0.018435}
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/8.pt Code balance 0.7438 Used code num of level 1: 256
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/8.pt Code balance 0.8834 Used code num of level 2: 256
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/8.pt Code balance 0.9142 Used code num of level 3: 256
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/8.pt Code confilct {'Max': 56, 'Min': 1, 'Type': 25466, '%': 0.9852}
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 56
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] [time: 23.84s, train loss[('loss', 0.0045), ('vq_loss', 0.0045), ('code_loss', 2.8924), ('kl_loss', 0.0292), ('dec_cl_loss', 12.724)]]
+Thu 09 Apr 2026 15:33:57 INFO  [Epoch 8] REC lr: [0.00127] ID lr: [6.35e-05]
+Thu 09 Apr 2026 15:34:53 INFO  [Epoch 9] [time: 55.46s, train loss[('loss', 3.0184), ('kl_loss', 0.0269), ('code_loss', 3.0184), ('dec_cl_loss', 12.7369)]]
+Thu 09 Apr 2026 15:34:53 INFO  [Epoch 9] REC lr: [0.0015875000000000002] ID lr: [6.35e-05]
+Thu 09 Apr 2026 15:35:57 INFO  [Epoch 9] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/9.pt
+Thu 09 Apr 2026 15:35:57 INFO  [Epoch 9] Val Results: {'recall@1': 0.007492, 'recall@5': 0.023105, 'ndcg@5': 0.015226, 'recall@10': 0.036364, 'ndcg@10': 0.019487}
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/10.pt Code balance 0.7365 Used code num of level 1: 256
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/10.pt Code balance 0.8546 Used code num of level 2: 256
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/10.pt Code balance 0.8908 Used code num of level 3: 256
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/10.pt Code confilct {'Max': 22, 'Min': 1, 'Type': 25483, '%': 0.9859}
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 22
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] [time: 22.83s, train loss[('loss', 0.0076), ('vq_loss', 0.0046), ('code_loss', 2.8131), ('kl_loss', 0.028), ('dec_cl_loss', 9.9161)]]
+Thu 09 Apr 2026 15:36:20 INFO  [Epoch 10] REC lr: [0.0015875000000000002] ID lr: [7.620000000000001e-05]
+Thu 09 Apr 2026 15:37:18 INFO  [Epoch 11] [time: 57.95s, train loss[('loss', 3.0262), ('kl_loss', 0.0146), ('code_loss', 3.0233), ('dec_cl_loss', 9.7683)]]
+Thu 09 Apr 2026 15:37:18 INFO  [Epoch 11] REC lr: [0.001905] ID lr: [7.620000000000001e-05]
+Thu 09 Apr 2026 15:38:22 INFO  [Epoch 11] Val Results: {'recall@1': 0.006551, 'recall@5': 0.022085, 'ndcg@5': 0.014274, 'recall@10': 0.035344, 'ndcg@10': 0.018529}
+Thu 09 Apr 2026 15:38:43 INFO  [Epoch 12] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/12.pt Code balance 0.7298 Used code num of level 1: 256
+Thu 09 Apr 2026 15:38:44 INFO  [Epoch 12] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/12.pt Code balance 0.8357 Used code num of level 2: 256
+Thu 09 Apr 2026 15:38:44 INFO  [Epoch 12] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/12.pt Code balance 0.8757 Used code num of level 3: 256
+Thu 09 Apr 2026 15:38:44 INFO  [Epoch 12] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/12.pt Code confilct {'Max': 43, 'Min': 1, 'Type': 25441, '%': 0.9843}
+Thu 09 Apr 2026 15:38:44 INFO  [Epoch 12] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 43
+Thu 09 Apr 2026 15:38:44 INFO  [Epoch 12] [time: 21.75s, train loss[('loss', 0.0074), ('vq_loss', 0.0045), ('code_loss', 2.7851), ('kl_loss', 0.0156), ('dec_cl_loss', 9.5877)]]
+Thu 09 Apr 2026 15:38:44 INFO  [Epoch 12] REC lr: [0.001905] ID lr: [8.89e-05]
+Thu 09 Apr 2026 15:39:41 INFO  [Epoch 13] [time: 57.77s, train loss[('loss', 3.0159), ('kl_loss', 0.0176), ('code_loss', 3.013), ('dec_cl_loss', 9.8911)]]
+Thu 09 Apr 2026 15:39:41 INFO  [Epoch 13] REC lr: [0.0022225] ID lr: [8.89e-05]
+Thu 09 Apr 2026 15:40:45 INFO  [Epoch 13] Val Results: {'recall@1': 0.006041, 'recall@5': 0.020163, 'ndcg@5': 0.013037, 'recall@10': 0.03199, 'ndcg@10': 0.016822}
+Thu 09 Apr 2026 15:41:09 INFO  [Epoch 14] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/14.pt Code balance 0.7221 Used code num of level 1: 256
+Thu 09 Apr 2026 15:41:09 INFO  [Epoch 14] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/14.pt Code balance 0.8174 Used code num of level 2: 256
+Thu 09 Apr 2026 15:41:09 INFO  [Epoch 14] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/14.pt Code balance 0.8728 Used code num of level 3: 256
+Thu 09 Apr 2026 15:41:09 INFO  [Epoch 14] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/14.pt Code confilct {'Max': 71, 'Min': 1, 'Type': 25442, '%': 0.9843}
+Thu 09 Apr 2026 15:41:10 INFO  [Epoch 14] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 71
+Thu 09 Apr 2026 15:41:10 INFO  [Epoch 14] [time: 24.05s, train loss[('loss', 0.0074), ('vq_loss', 0.0045), ('code_loss', 2.8169), ('kl_loss', 0.0189), ('dec_cl_loss', 9.8467)]]
+Thu 09 Apr 2026 15:41:10 INFO  [Epoch 14] REC lr: [0.0022225] ID lr: [9.999989390377952e-05]
+Thu 09 Apr 2026 15:42:08 INFO  [Epoch 15] [time: 58.71s, train loss[('loss', 3.01), ('kl_loss', 0.0188), ('code_loss', 3.007), ('dec_cl_loss', 10.0222)]]
+Thu 09 Apr 2026 15:42:08 INFO  [Epoch 15] REC lr: [0.00254] ID lr: [9.999989390377952e-05]
+Thu 09 Apr 2026 15:43:13 INFO  [Epoch 15] Val Results: {'recall@1': 0.005609, 'recall@5': 0.017966, 'ndcg@5': 0.011701, 'recall@10': 0.029852, 'ndcg@10': 0.015537}
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/16.pt Code balance 0.713 Used code num of level 1: 256
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/16.pt Code balance 0.8114 Used code num of level 2: 256
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/16.pt Code balance 0.8682 Used code num of level 3: 256
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/16.pt Code confilct {'Max': 82, 'Min': 1, 'Type': 25442, '%': 0.9843}
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 82
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] [time: 23.57s, train loss[('loss', 0.0074), ('vq_loss', 0.0044), ('code_loss', 2.8165), ('kl_loss', 0.0205), ('dec_cl_loss', 9.9968)]]
+Thu 09 Apr 2026 15:43:36 INFO  [Epoch 16] REC lr: [0.00254] ID lr: [9.999152538636093e-05]
+Thu 09 Apr 2026 15:44:33 INFO  [Epoch 17] [time: 57.17s, train loss[('loss', 3.0046), ('kl_loss', 0.0195), ('code_loss', 3.0016), ('dec_cl_loss', 10.1703)]]
+Thu 09 Apr 2026 15:44:33 INFO  [Epoch 17] REC lr: [0.0028575000000000002] ID lr: [9.999152538636093e-05]
+Thu 09 Apr 2026 15:45:38 INFO  [Epoch 17] Val Results: {'recall@1': 0.005609, 'recall@5': 0.017397, 'ndcg@5': 0.01131, 'recall@10': 0.028499, 'ndcg@10': 0.014881}
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/18.pt Code balance 0.7008 Used code num of level 1: 256
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/18.pt Code balance 0.8034 Used code num of level 2: 256
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/18.pt Code balance 0.8669 Used code num of level 3: 256
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/18.pt Code confilct {'Max': 47, 'Min': 1, 'Type': 25418, '%': 0.9834}
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 47
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] [time: 22.87s, train loss[('loss', 0.0074), ('vq_loss', 0.0043), ('code_loss', 2.825), ('kl_loss', 0.0238), ('dec_cl_loss', 10.2476)]]
+Thu 09 Apr 2026 15:46:01 INFO  [Epoch 18] REC lr: [0.0028575000000000002] ID lr: [9.996979047532001e-05]
+Thu 09 Apr 2026 15:47:01 INFO  [Epoch 19] [time: 59.39s, train loss[('loss', 3.027), ('kl_loss', 0.0202), ('code_loss', 3.0239), ('dec_cl_loss', 10.3831)]]
+Thu 09 Apr 2026 15:47:01 INFO  [Epoch 19] REC lr: [0.0031750000000000003] ID lr: [9.996979047532001e-05]
+Thu 09 Apr 2026 15:48:04 INFO  [Epoch 19] Val Results: {'recall@1': 0.004943, 'recall@5': 0.016495, 'ndcg@5': 0.010709, 'recall@10': 0.026616, 'ndcg@10': 0.013933}
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/20.pt Code balance 0.6913 Used code num of level 1: 256
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/20.pt Code balance 0.7973 Used code num of level 2: 256
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/20.pt Code balance 0.864 Used code num of level 3: 256
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/20.pt Code confilct {'Max': 45, 'Min': 1, 'Type': 25416, '%': 0.9833}
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 45
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] [time: 23.44s, train loss[('loss', 0.0074), ('vq_loss', 0.0043), ('code_loss', 2.8189), ('kl_loss', 0.0215), ('dec_cl_loss', 10.2609)]]
+Thu 09 Apr 2026 15:48:28 INFO  [Epoch 20] REC lr: [0.0031750000000000003] ID lr: [9.993469498198924e-05]
+Thu 09 Apr 2026 15:49:26 INFO  [Epoch 21] [time: 58.41s, train loss[('loss', 3.0535), ('kl_loss', 0.0207), ('code_loss', 3.0503), ('dec_cl_loss', 10.4988)]]
+Thu 09 Apr 2026 15:49:26 INFO  [Epoch 21] REC lr: [0.0034925] ID lr: [9.993469498198924e-05]
+Thu 09 Apr 2026 15:50:31 INFO  [Epoch 21] Val Results: {'recall@1': 0.005217, 'recall@5': 0.015514, 'ndcg@5': 0.010369, 'recall@10': 0.024203, 'ndcg@10': 0.013145}
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/22.pt Code balance 0.6827 Used code num of level 1: 256
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/22.pt Code balance 0.7916 Used code num of level 2: 256
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/22.pt Code balance 0.8643 Used code num of level 3: 256
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/22.pt Code confilct {'Max': 34, 'Min': 1, 'Type': 25405, '%': 0.9829}
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 34
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] [time: 23.30s, train loss[('loss', 0.0073), ('vq_loss', 0.0042), ('code_loss', 2.8718), ('kl_loss', 0.0251), ('dec_cl_loss', 10.2885)]]
+Thu 09 Apr 2026 15:50:54 INFO  [Epoch 22] REC lr: [0.0034925] ID lr: [9.988624828996263e-05]
+Thu 09 Apr 2026 15:51:50 INFO  [Epoch 23] [time: 56.03s, train loss[('loss', 3.0228), ('kl_loss', 0.0189), ('code_loss', 3.0197), ('dec_cl_loss', 10.3186)]]
+Thu 09 Apr 2026 15:51:50 INFO  [Epoch 23] REC lr: [0.00381] ID lr: [9.988624828996263e-05]
+Thu 09 Apr 2026 15:52:54 INFO  [Epoch 23] Val Results: {'recall@1': 0.005296, 'recall@5': 0.016613, 'ndcg@5': 0.010971, 'recall@10': 0.02589, 'ndcg@10': 0.013943}
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/24.pt Code balance 0.678 Used code num of level 1: 256
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/24.pt Code balance 0.7818 Used code num of level 2: 256
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/24.pt Code balance 0.8678 Used code num of level 3: 256
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/24.pt Code confilct {'Max': 48, 'Min': 1, 'Type': 25418, '%': 0.9834}
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 48
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] [time: 23.48s, train loss[('loss', 0.0072), ('vq_loss', 0.0042), ('code_loss', 2.8502), ('kl_loss', 0.0257), ('dec_cl_loss', 10.2173)]]
+Thu 09 Apr 2026 15:53:17 INFO  [Epoch 24] REC lr: [0.00381] ID lr: [9.982446335258677e-05]
+Thu 09 Apr 2026 15:54:15 INFO  [Epoch 25] [time: 57.62s, train loss[('loss', 2.9284), ('kl_loss', 0.0174), ('code_loss', 2.9253), ('dec_cl_loss', 10.1089)]]
+Thu 09 Apr 2026 15:54:15 INFO  [Epoch 25] REC lr: [0.0041275] ID lr: [9.982446335258677e-05]
+Thu 09 Apr 2026 15:55:19 INFO  [Epoch 25] Val Results: {'recall@1': 0.003609, 'recall@5': 0.016789, 'ndcg@5': 0.01021, 'recall@10': 0.027243, 'ndcg@10': 0.013597}
+Thu 09 Apr 2026 15:55:42 INFO  [Epoch 26] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/26.pt Code balance 0.6763 Used code num of level 1: 256
+Thu 09 Apr 2026 15:55:42 INFO  [Epoch 26] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/26.pt Code balance 0.7783 Used code num of level 2: 256
+Thu 09 Apr 2026 15:55:42 INFO  [Epoch 26] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/26.pt Code balance 0.8683 Used code num of level 3: 256
+Thu 09 Apr 2026 15:55:42 INFO  [Epoch 26] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/26.pt Code confilct {'Max': 54, 'Min': 1, 'Type': 25424, '%': 0.9836}
+Thu 09 Apr 2026 15:55:43 INFO  [Epoch 26] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 54
+Thu 09 Apr 2026 15:55:43 INFO  [Epoch 26] [time: 23.98s, train loss[('loss', 0.0072), ('vq_loss', 0.0042), ('code_loss', 2.7629), ('kl_loss', 0.0235), ('dec_cl_loss', 10.1848)]]
+Thu 09 Apr 2026 15:55:43 INFO  [Epoch 26] REC lr: [0.0041275] ID lr: [9.974935668949749e-05]
+Thu 09 Apr 2026 15:56:40 INFO  [Epoch 27] [time: 57.36s, train loss[('loss', 2.9043), ('kl_loss', 0.0181), ('code_loss', 2.9012), ('dec_cl_loss', 10.1691)]]
+Thu 09 Apr 2026 15:56:40 INFO  [Epoch 27] REC lr: [0.004445] ID lr: [9.974935668949749e-05]
+Thu 09 Apr 2026 15:57:44 INFO  [Epoch 27] Val Results: {'recall@1': 0.005178, 'recall@5': 0.01573, 'ndcg@5': 0.010252, 'recall@10': 0.025321, 'ndcg@10': 0.013344}
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/28.pt Code balance 0.6711 Used code num of level 1: 256
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/28.pt Code balance 0.7753 Used code num of level 2: 256
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/28.pt Code balance 0.8654 Used code num of level 3: 256
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/28.pt Code confilct {'Max': 82, 'Min': 1, 'Type': 25433, '%': 0.9839}
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 82
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] [time: 23.59s, train loss[('loss', 0.0072), ('vq_loss', 0.0041), ('code_loss', 2.7726), ('kl_loss', 0.0257), ('dec_cl_loss', 10.2477)]]
+Thu 09 Apr 2026 15:58:07 INFO  [Epoch 28] REC lr: [0.004445] ID lr: [9.96609483822029e-05]
+Thu 09 Apr 2026 15:59:06 INFO  [Epoch 29] [time: 59.06s, train loss[('loss', 2.8864), ('kl_loss', 0.0174), ('code_loss', 2.8834), ('dec_cl_loss', 10.1688)]]
+Thu 09 Apr 2026 15:59:06 INFO  [Epoch 29] REC lr: [0.0047625] ID lr: [9.96609483822029e-05]
+Thu 09 Apr 2026 16:00:12 INFO  [Epoch 29] Val Results: {'recall@1': 0.005119, 'recall@5': 0.016828, 'ndcg@5': 0.011, 'recall@10': 0.028263, 'ndcg@10': 0.014684}
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/30.pt Code balance 0.669 Used code num of level 1: 256
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/30.pt Code balance 0.7768 Used code num of level 2: 256
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/30.pt Code balance 0.8625 Used code num of level 3: 256
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/30.pt Code confilct {'Max': 69, 'Min': 1, 'Type': 25402, '%': 0.9827}
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 69
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] [time: 23.38s, train loss[('loss', 0.0072), ('vq_loss', 0.0041), ('code_loss', 2.7096), ('kl_loss', 0.0222), ('dec_cl_loss', 10.1715)]]
+Thu 09 Apr 2026 16:00:35 INFO  [Epoch 30] REC lr: [0.0047625] ID lr: [9.955926206871413e-05]
+Thu 09 Apr 2026 16:01:34 INFO  [Epoch 31] [time: 58.42s, train loss[('loss', 2.8883), ('kl_loss', 0.0176), ('code_loss', 2.8853), ('dec_cl_loss', 10.1838)]]
+Thu 09 Apr 2026 16:01:34 INFO  [Epoch 31] REC lr: [0.004999994695188976] ID lr: [9.955926206871413e-05]
+Thu 09 Apr 2026 16:02:38 INFO  [Epoch 31] Val Results: {'recall@1': 0.004943, 'recall@5': 0.01675, 'ndcg@5': 0.010807, 'recall@10': 0.027655, 'ndcg@10': 0.014299}
+Thu 09 Apr 2026 16:03:01 INFO  [Epoch 32] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/32.pt Code balance 0.6657 Used code num of level 1: 256
+Thu 09 Apr 2026 16:03:02 INFO  [Epoch 32] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/32.pt Code balance 0.7717 Used code num of level 2: 256
+Thu 09 Apr 2026 16:03:02 INFO  [Epoch 32] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/32.pt Code balance 0.8606 Used code num of level 3: 256
+Thu 09 Apr 2026 16:03:02 INFO  [Epoch 32] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/32.pt Code confilct {'Max': 78, 'Min': 1, 'Type': 25407, '%': 0.9829}
+Thu 09 Apr 2026 16:03:02 INFO  [Epoch 32] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 78
+Thu 09 Apr 2026 16:03:02 INFO  [Epoch 32] [time: 23.57s, train loss[('loss', 0.0072), ('vq_loss', 0.0041), ('code_loss', 2.7238), ('kl_loss', 0.023), ('dec_cl_loss', 10.1955)]]
+Thu 09 Apr 2026 16:03:02 INFO  [Epoch 32] REC lr: [0.004999994695188976] ID lr: [9.944432493722524e-05]
+Thu 09 Apr 2026 16:04:00 INFO  [Epoch 33] [time: 58.31s, train loss[('loss', 2.8804), ('kl_loss', 0.0175), ('code_loss', 2.8774), ('dec_cl_loss', 10.2026)]]
+Thu 09 Apr 2026 16:04:00 INFO  [Epoch 33] REC lr: [0.00499986903339454] ID lr: [9.944432493722524e-05]
+Thu 09 Apr 2026 16:05:04 INFO  [Epoch 33] Val Results: {'recall@1': 0.004923, 'recall@5': 0.016181, 'ndcg@5': 0.010433, 'recall@10': 0.026478, 'ndcg@10': 0.013755}
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/34.pt Code balance 0.6619 Used code num of level 1: 256
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/34.pt Code balance 0.7744 Used code num of level 2: 256
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/34.pt Code balance 0.8614 Used code num of level 3: 256
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/34.pt Code confilct {'Max': 35, 'Min': 1, 'Type': 25418, '%': 0.9834}
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 35
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] [time: 23.66s, train loss[('loss', 0.0071), ('vq_loss', 0.0041), ('code_loss', 2.7305), ('kl_loss', 0.0245), ('dec_cl_loss', 10.235)]]
+Thu 09 Apr 2026 16:05:27 INFO  [Epoch 34] REC lr: [0.00499986903339454] ID lr: [9.931616771884372e-05]
+Thu 09 Apr 2026 16:06:25 INFO  [Epoch 35] [time: 57.73s, train loss[('loss', 2.8347), ('kl_loss', 0.0164), ('code_loss', 2.8317), ('dec_cl_loss', 10.0418)]]
+Thu 09 Apr 2026 16:06:25 INFO  [Epoch 35] REC lr: [0.0049995762693180465] ID lr: [9.931616771884372e-05]
+Thu 09 Apr 2026 16:07:29 INFO  [Epoch 35] Val Results: {'recall@1': 0.004982, 'recall@5': 0.016201, 'ndcg@5': 0.010606, 'recall@10': 0.025458, 'ndcg@10': 0.013576}
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/36.pt Code balance 0.6537 Used code num of level 1: 256
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/36.pt Code balance 0.7627 Used code num of level 2: 256
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/36.pt Code balance 0.8542 Used code num of level 3: 256
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/36.pt Code confilct {'Max': 72, 'Min': 1, 'Type': 25401, '%': 0.9827}
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 72
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] [time: 24.00s, train loss[('loss', 0.0071), ('vq_loss', 0.0041), ('code_loss', 2.6805), ('kl_loss', 0.0239), ('dec_cl_loss', 10.135)]]
+Thu 09 Apr 2026 16:07:53 INFO  [Epoch 36] REC lr: [0.0049995762693180465] ID lr: [9.91748246793739e-05]
+Thu 09 Apr 2026 16:08:51 INFO  [Epoch 37] [time: 58.09s, train loss[('loss', 2.8428), ('kl_loss', 0.0184), ('code_loss', 2.8398), ('dec_cl_loss', 10.2915)]]
+Thu 09 Apr 2026 16:08:51 INFO  [Epoch 37] REC lr: [0.004999116422529137] ID lr: [9.91748246793739e-05]
+Thu 09 Apr 2026 16:09:54 INFO  [Epoch 37] Val Results: {'recall@1': 0.004923, 'recall@5': 0.016142, 'ndcg@5': 0.010429, 'recall@10': 0.026518, 'ndcg@10': 0.013755}
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/38.pt Code balance 0.6507 Used code num of level 1: 255
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/38.pt Code balance 0.7632 Used code num of level 2: 256
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/38.pt Code balance 0.8582 Used code num of level 3: 256
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] Evaluation ./myckpt/scientific/Apr-09-2026_15-23-58109b/38.pt Code confilct {'Max': 48, 'Min': 1, 'Type': 25389, '%': 0.9822}
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 48
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] [time: 24.22s, train loss[('loss', 0.0072), ('vq_loss', 0.004), ('code_loss', 2.6853), ('kl_loss', 0.0237), ('dec_cl_loss', 10.5017)]]
+Thu 09 Apr 2026 16:10:19 INFO  [Epoch 38] REC lr: [0.004999116422529137] ID lr: [9.902033361015515e-05]
+Thu 09 Apr 2026 16:11:15 INFO  [Epoch 39] [time: 56.59s, train loss[('loss', 2.8817), ('kl_loss', 0.0179), ('code_loss', 2.8786), ('dec_cl_loss', 10.3387)]]
+Thu 09 Apr 2026 16:11:15 INFO  [Epoch 39] REC lr: [0.004998489523766] ID lr: [9.902033361015515e-05]
+Thu 09 Apr 2026 16:12:19 INFO  [Epoch 39] Val Results: {'recall@1': 0.004884, 'recall@5': 0.017986, 'ndcg@5': 0.011376, 'recall@10': 0.028381, 'ndcg@10': 0.014705}
+Thu 09 Apr 2026 16:12:20 INFO  Loading model parameters from ./myckpt/scientific/Apr-09-2026_15-23-58109b/9.pt
+Thu 09 Apr 2026 16:13:25 INFO  [Epoch 0] [TOKENIZER] RQ-VAE semantic IDs, maximum conflict: 56
+Thu 09 Apr 2026 16:14:23 INFO  [Epoch 0] [time: 57.64s, train loss[('loss', 2.8338), ('kl_loss', 0.0251), ('code_loss', 2.8338), ('dec_cl_loss', 12.7959)]]
+Thu 09 Apr 2026 16:14:23 INFO  [Epoch 0] Current REC lr: [0.0004998766400914329]
+Thu 09 Apr 2026 16:15:28 INFO  [Epoch 0] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/0.pt
+Thu 09 Apr 2026 16:15:28 INFO  [Epoch 0] Val Results: {'recall@1': 0.007571, 'recall@5': 0.025537, 'ndcg@5': 0.016547, 'recall@10': 0.041463, 'ndcg@10': 0.021648}
+Thu 09 Apr 2026 16:16:24 INFO  [Epoch 1] [time: 56.94s, train loss[('loss', 2.762), ('kl_loss', 0.0242), ('code_loss', 2.762), ('dec_cl_loss', 12.7953)]]
+Thu 09 Apr 2026 16:16:24 INFO  [Epoch 1] Current REC lr: [0.0004995066821070679]
+Thu 09 Apr 2026 16:17:30 INFO  [Epoch 1] Val Results: {'recall@1': 0.007571, 'recall@5': 0.025988, 'ndcg@5': 0.016698, 'recall@10': 0.041247, 'ndcg@10': 0.021611}
+Thu 09 Apr 2026 16:18:29 INFO  [Epoch 2] [time: 58.90s, train loss[('loss', 2.7156), ('kl_loss', 0.0236), ('code_loss', 2.7156), ('dec_cl_loss', 12.8147)]]
+Thu 09 Apr 2026 16:18:29 INFO  [Epoch 2] Current REC lr: [0.00049889049115077]
+Thu 09 Apr 2026 16:19:33 INFO  [Epoch 2] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/2.pt
+Thu 09 Apr 2026 16:19:33 INFO  [Epoch 2] Val Results: {'recall@1': 0.007767, 'recall@5': 0.026733, 'ndcg@5': 0.017157, 'recall@10': 0.042875, 'ndcg@10': 0.022341}
+Thu 09 Apr 2026 16:20:31 INFO  [Epoch 3] [time: 58.72s, train loss[('loss', 2.6756), ('kl_loss', 0.0232), ('code_loss', 2.6756), ('dec_cl_loss', 12.8035)]]
+Thu 09 Apr 2026 16:20:31 INFO  [Epoch 3] Current REC lr: [0.0004980286753286195]
+Thu 09 Apr 2026 16:21:36 INFO  [Epoch 3] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/3.pt
+Thu 09 Apr 2026 16:21:36 INFO  [Epoch 3] Val Results: {'recall@1': 0.008159, 'recall@5': 0.027459, 'ndcg@5': 0.017813, 'recall@10': 0.044033, 'ndcg@10': 0.023135}
+Thu 09 Apr 2026 16:22:35 INFO  [Epoch 4] [time: 58.88s, train loss[('loss', 2.643), ('kl_loss', 0.0229), ('code_loss', 2.643), ('dec_cl_loss', 12.8106)]]
+Thu 09 Apr 2026 16:22:35 INFO  [Epoch 4] Current REC lr: [0.0004969220851487844]
+Thu 09 Apr 2026 16:23:40 INFO  [Epoch 4] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/4.pt
+Thu 09 Apr 2026 16:23:40 INFO  [Epoch 4] Val Results: {'recall@1': 0.008022, 'recall@5': 0.027283, 'ndcg@5': 0.017607, 'recall@10': 0.044797, 'ndcg@10': 0.023214}
+Thu 09 Apr 2026 16:24:39 INFO  [Epoch 5] [time: 58.83s, train loss[('loss', 2.6132), ('kl_loss', 0.0225), ('code_loss', 2.6132), ('dec_cl_loss', 12.8394)]]
+Thu 09 Apr 2026 16:24:39 INFO  [Epoch 5] Current REC lr: [0.0004955718126821722]
+Thu 09 Apr 2026 16:25:43 INFO  [Epoch 5] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/5.pt
+Thu 09 Apr 2026 16:25:43 INFO  [Epoch 5] Val Results: {'recall@1': 0.008473, 'recall@5': 0.028342, 'ndcg@5': 0.01827, 'recall@10': 0.044719, 'ndcg@10': 0.023524}
+Thu 09 Apr 2026 16:26:41 INFO  [Epoch 6] [time: 58.02s, train loss[('loss', 2.5875), ('kl_loss', 0.022), ('code_loss', 2.5875), ('dec_cl_loss', 12.838)]]
+Thu 09 Apr 2026 16:26:41 INFO  [Epoch 6] Current REC lr: [0.0004939791904846869]
+Thu 09 Apr 2026 16:27:48 INFO  [Epoch 6] Val Results: {'recall@1': 0.008081, 'recall@5': 0.028283, 'ndcg@5': 0.018183, 'recall@10': 0.044229, 'ndcg@10': 0.023314}
+Thu 09 Apr 2026 16:28:48 INFO  [Epoch 7] [time: 59.56s, train loss[('loss', 2.5643), ('kl_loss', 0.0217), ('code_loss', 2.5643), ('dec_cl_loss', 12.847)]]
+Thu 09 Apr 2026 16:28:48 INFO  [Epoch 7] Current REC lr: [0.0004921457902821578]
+Thu 09 Apr 2026 16:29:55 INFO  [Epoch 7] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/7.pt
+Thu 09 Apr 2026 16:29:55 INFO  [Epoch 7] Val Results: {'recall@1': 0.008297, 'recall@5': 0.028459, 'ndcg@5': 0.018278, 'recall@10': 0.045837, 'ndcg@10': 0.023854}
+Thu 09 Apr 2026 16:30:55 INFO  [Epoch 8] [time: 59.37s, train loss[('loss', 2.5443), ('kl_loss', 0.0214), ('code_loss', 2.5443), ('dec_cl_loss', 12.8608)]]
+Thu 09 Apr 2026 16:30:55 INFO  [Epoch 8] Current REC lr: [0.0004900734214192358]
+Thu 09 Apr 2026 16:31:59 INFO  [Epoch 8] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/8.pt
+Thu 09 Apr 2026 16:31:59 INFO  [Epoch 8] Val Results: {'recall@1': 0.008375, 'recall@5': 0.028675, 'ndcg@5': 0.01838, 'recall@10': 0.045759, 'ndcg@10': 0.023866}
+Thu 09 Apr 2026 16:32:58 INFO  [Epoch 9] [time: 59.22s, train loss[('loss', 2.5256), ('kl_loss', 0.0209), ('code_loss', 2.5256), ('dec_cl_loss', 12.8606)]]
+Thu 09 Apr 2026 16:32:58 INFO  [Epoch 9] Current REC lr: [0.0004877641290737884]
+Thu 09 Apr 2026 16:34:03 INFO  [Epoch 9] Val Results: {'recall@1': 0.008081, 'recall@5': 0.02842, 'ndcg@5': 0.018163, 'recall@10': 0.045798, 'ndcg@10': 0.023754}
+Thu 09 Apr 2026 16:35:02 INFO  [Epoch 10] [time: 58.52s, train loss[('loss', 2.5074), ('kl_loss', 0.0206), ('code_loss', 2.5074), ('dec_cl_loss', 12.8906)]]
+Thu 09 Apr 2026 16:35:02 INFO  [Epoch 10] Current REC lr: [0.0004852201922385564]
+Thu 09 Apr 2026 16:36:08 INFO  [Epoch 10] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/10.pt
+Thu 09 Apr 2026 16:36:08 INFO  [Epoch 10] Val Results: {'recall@1': 0.00865, 'recall@5': 0.028499, 'ndcg@5': 0.018593, 'recall@10': 0.045719, 'ndcg@10': 0.024153}
+Thu 09 Apr 2026 16:37:05 INFO  [Epoch 11] [time: 57.27s, train loss[('loss', 2.4913), ('kl_loss', 0.0203), ('code_loss', 2.4913), ('dec_cl_loss', 12.8646)]]
+Thu 09 Apr 2026 16:37:05 INFO  [Epoch 11] Current REC lr: [0.00048244412147206283]
+Thu 09 Apr 2026 16:38:11 INFO  [Epoch 11] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/11.pt
+Thu 09 Apr 2026 16:38:11 INFO  [Epoch 11] Val Results: {'recall@1': 0.00865, 'recall@5': 0.02946, 'ndcg@5': 0.019045, 'recall@10': 0.047033, 'ndcg@10': 0.024689}
+Thu 09 Apr 2026 16:39:10 INFO  [Epoch 12] [time: 58.81s, train loss[('loss', 2.4768), ('kl_loss', 0.02), ('code_loss', 2.4768), ('dec_cl_loss', 12.8822)]]
+Thu 09 Apr 2026 16:39:10 INFO  [Epoch 12] Current REC lr: [0.00047943865642099525]
+Thu 09 Apr 2026 16:40:16 INFO  [Epoch 12] Val Results: {'recall@1': 0.008414, 'recall@5': 0.028126, 'ndcg@5': 0.018236, 'recall@10': 0.046092, 'ndcg@10': 0.024035}
+Thu 09 Apr 2026 16:41:14 INFO  [Epoch 13] [time: 58.52s, train loss[('loss', 2.4632), ('kl_loss', 0.0196), ('code_loss', 2.4632), ('dec_cl_loss', 12.8493)]]
+Thu 09 Apr 2026 16:41:14 INFO  [Epoch 13] Current REC lr: [0.0004762067631165049]
+Thu 09 Apr 2026 16:42:19 INFO  [Epoch 13] Val Results: {'recall@1': 0.008355, 'recall@5': 0.029107, 'ndcg@5': 0.018749, 'recall@10': 0.045523, 'ndcg@10': 0.024032}
+Thu 09 Apr 2026 16:43:18 INFO  [Epoch 14] [time: 58.82s, train loss[('loss', 2.4509), ('kl_loss', 0.0193), ('code_loss', 2.4509), ('dec_cl_loss', 12.8692)]]
+Thu 09 Apr 2026 16:43:18 INFO  [Epoch 14] Current REC lr: [0.00047275163104709196]
+Thu 09 Apr 2026 16:44:22 INFO  [Epoch 14] Val Results: {'recall@1': 0.00865, 'recall@5': 0.029009, 'ndcg@5': 0.018772, 'recall@10': 0.045072, 'ndcg@10': 0.023944}
+Thu 09 Apr 2026 16:45:21 INFO  [Epoch 15] [time: 58.99s, train loss[('loss', 2.4388), ('kl_loss', 0.019), ('code_loss', 2.4388), ('dec_cl_loss', 12.8166)]]
+Thu 09 Apr 2026 16:45:21 INFO  [Epoch 15] Current REC lr: [0.0004690766700109659]
+Thu 09 Apr 2026 16:46:26 INFO  [Epoch 15] Val Results: {'recall@1': 0.008355, 'recall@5': 0.028577, 'ndcg@5': 0.01844, 'recall@10': 0.04619, 'ndcg@10': 0.024119}
+Thu 09 Apr 2026 16:47:25 INFO  [Epoch 16] [time: 58.72s, train loss[('loss', 2.4295), ('kl_loss', 0.0187), ('code_loss', 2.4295), ('dec_cl_loss', 12.8608)]]
+Thu 09 Apr 2026 16:47:25 INFO  [Epoch 16] Current REC lr: [0.0004651855067509859]
+Thu 09 Apr 2026 16:48:29 INFO  [Epoch 16] Val Results: {'recall@1': 0.008473, 'recall@5': 0.029067, 'ndcg@5': 0.018812, 'recall@10': 0.045817, 'ndcg@10': 0.024222}
+Thu 09 Apr 2026 16:49:28 INFO  [Epoch 17] [time: 59.31s, train loss[('loss', 2.4186), ('kl_loss', 0.0184), ('code_loss', 2.4186), ('dec_cl_loss', 12.8444)]]
+Thu 09 Apr 2026 16:49:28 INFO  [Epoch 17] Current REC lr: [0.00046108198137550377]
+Thu 09 Apr 2026 16:50:33 INFO  [Epoch 17] Val Results: {'recall@1': 0.00865, 'recall@5': 0.029107, 'ndcg@5': 0.018918, 'recall@10': 0.046896, 'ndcg@10': 0.02464}
+Thu 09 Apr 2026 16:51:32 INFO  [Epoch 18] [time: 59.05s, train loss[('loss', 2.4097), ('kl_loss', 0.0183), ('code_loss', 2.4097), ('dec_cl_loss', 12.8503)]]
+Thu 09 Apr 2026 16:51:32 INFO  [Epoch 18] Current REC lr: [0.00045677014356864043]
+Thu 09 Apr 2026 16:52:37 INFO  [Epoch 18] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/18.pt
+Thu 09 Apr 2026 16:52:37 INFO  [Epoch 18] Val Results: {'recall@1': 0.008552, 'recall@5': 0.029734, 'ndcg@5': 0.019083, 'recall@10': 0.04772, 'ndcg@10': 0.024889}
+Thu 09 Apr 2026 16:53:36 INFO  [Epoch 19] [time: 59.31s, train loss[('loss', 2.398), ('kl_loss', 0.0181), ('code_loss', 2.398), ('dec_cl_loss', 12.8401)]]
+Thu 09 Apr 2026 16:53:36 INFO  [Epoch 19] Current REC lr: [0.0004522542485937369]
+Thu 09 Apr 2026 16:54:42 INFO  [Epoch 19] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/19.pt
+Thu 09 Apr 2026 16:54:42 INFO  [Epoch 19] Val Results: {'recall@1': 0.008787, 'recall@5': 0.030735, 'ndcg@5': 0.019719, 'recall@10': 0.046916, 'ndcg@10': 0.024933}
+Thu 09 Apr 2026 16:55:40 INFO  [Epoch 20] [time: 58.23s, train loss[('loss', 2.3898), ('kl_loss', 0.0177), ('code_loss', 2.3898), ('dec_cl_loss', 12.8472)]]
+Thu 09 Apr 2026 16:55:40 INFO  [Epoch 20] Current REC lr: [0.0004475387530939226]
+Thu 09 Apr 2026 16:56:45 INFO  [Epoch 20] Val Results: {'recall@1': 0.009101, 'recall@5': 0.029558, 'ndcg@5': 0.019219, 'recall@10': 0.046661, 'ndcg@10': 0.024697}
+Thu 09 Apr 2026 16:57:44 INFO  [Epoch 21] [time: 58.75s, train loss[('loss', 2.3805), ('kl_loss', 0.0175), ('code_loss', 2.3805), ('dec_cl_loss', 12.8649)]]
+Thu 09 Apr 2026 16:57:44 INFO  [Epoch 21] Current REC lr: [0.0004426283106939473]
+Thu 09 Apr 2026 16:58:49 INFO  [Epoch 21] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/21.pt
+Thu 09 Apr 2026 16:58:49 INFO  [Epoch 21] Val Results: {'recall@1': 0.008924, 'recall@5': 0.030107, 'ndcg@5': 0.019522, 'recall@10': 0.047014, 'ndcg@10': 0.02496}
+Thu 09 Apr 2026 16:59:48 INFO  [Epoch 22] [time: 59.26s, train loss[('loss', 2.3722), ('kl_loss', 0.0172), ('code_loss', 2.3722), ('dec_cl_loss', 12.8563)]]
+Thu 09 Apr 2026 16:59:48 INFO  [Epoch 22] Current REC lr: [0.0004375277674076149]
+Thu 09 Apr 2026 17:00:52 INFO  [Epoch 22] Val Results: {'recall@1': 0.008748, 'recall@5': 0.030028, 'ndcg@5': 0.019268, 'recall@10': 0.047308, 'ndcg@10': 0.024839}
+Thu 09 Apr 2026 17:01:51 INFO  [Epoch 23] [time: 59.06s, train loss[('loss', 2.3662), ('kl_loss', 0.0169), ('code_loss', 2.3662), ('dec_cl_loss', 12.8686)]]
+Thu 09 Apr 2026 17:01:51 INFO  [Epoch 23] Current REC lr: [0.00043224215685535287]
+Thu 09 Apr 2026 17:02:56 INFO  [Epoch 23] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/23.pt
+Thu 09 Apr 2026 17:02:56 INFO  [Epoch 23] Val Results: {'recall@1': 0.009316, 'recall@5': 0.030872, 'ndcg@5': 0.020055, 'recall@10': 0.047818, 'ndcg@10': 0.025519}
+Thu 09 Apr 2026 17:03:53 INFO  [Epoch 24] [time: 57.05s, train loss[('loss', 2.3581), ('kl_loss', 0.0167), ('code_loss', 2.3581), ('dec_cl_loss', 12.8805)]]
+Thu 09 Apr 2026 17:03:53 INFO  [Epoch 24] Current REC lr: [0.00042677669529663686]
+Thu 09 Apr 2026 17:04:59 INFO  [Epoch 24] Val Results: {'recall@1': 0.008728, 'recall@5': 0.029989, 'ndcg@5': 0.019412, 'recall@10': 0.04772, 'ndcg@10': 0.025127}
+Thu 09 Apr 2026 17:06:00 INFO  [Epoch 25] [time: 60.20s, train loss[('loss', 2.3504), ('kl_loss', 0.0165), ('code_loss', 2.3504), ('dec_cl_loss', 12.8788)]]
+Thu 09 Apr 2026 17:06:00 INFO  [Epoch 25] Current REC lr: [0.0004211367764821722]
+Thu 09 Apr 2026 17:07:09 INFO  [Epoch 25] Val Results: {'recall@1': 0.008944, 'recall@5': 0.03095, 'ndcg@5': 0.019853, 'recall@10': 0.048426, 'ndcg@10': 0.025453}
+Thu 09 Apr 2026 17:08:08 INFO  [Epoch 26] [time: 58.42s, train loss[('loss', 2.3427), ('kl_loss', 0.0162), ('code_loss', 2.3427), ('dec_cl_loss', 12.8965)]]
+Thu 09 Apr 2026 17:08:08 INFO  [Epoch 26] Current REC lr: [0.00041532796633091297]
+Thu 09 Apr 2026 17:09:16 INFO  [Epoch 26] Val Results: {'recall@1': 0.008983, 'recall@5': 0.031421, 'ndcg@5': 0.020222, 'recall@10': 0.047779, 'ndcg@10': 0.025483}
+Thu 09 Apr 2026 17:10:15 INFO  [Epoch 27] [time: 58.98s, train loss[('loss', 2.3367), ('kl_loss', 0.0161), ('code_loss', 2.3367), ('dec_cl_loss', 12.8719)]]
+Thu 09 Apr 2026 17:10:15 INFO  [Epoch 27] Current REC lr: [0.00040935599743717243]
+Thu 09 Apr 2026 17:11:23 INFO  [Epoch 27] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/27.pt
+Thu 09 Apr 2026 17:11:23 INFO  [Epoch 27] Val Results: {'recall@1': 0.00965, 'recall@5': 0.030813, 'ndcg@5': 0.02025, 'recall@10': 0.048191, 'ndcg@10': 0.025837}
+Thu 09 Apr 2026 17:12:23 INFO  [Epoch 28] [time: 60.23s, train loss[('loss', 2.3287), ('kl_loss', 0.0159), ('code_loss', 2.3287), ('dec_cl_loss', 12.8753)]]
+Thu 09 Apr 2026 17:12:23 INFO  [Epoch 28] Current REC lr: [0.00040322676341324415]
+Thu 09 Apr 2026 17:13:30 INFO  [Epoch 28] Val Results: {'recall@1': 0.008905, 'recall@5': 0.030735, 'ndcg@5': 0.019869, 'recall@10': 0.047896, 'ndcg@10': 0.025383}
+Thu 09 Apr 2026 17:14:30 INFO  [Epoch 29] [time: 59.93s, train loss[('loss', 2.3225), ('kl_loss', 0.0156), ('code_loss', 2.3225), ('dec_cl_loss', 12.8803)]]
+Thu 09 Apr 2026 17:14:30 INFO  [Epoch 29] Current REC lr: [0.0003969463130731183]
+Thu 09 Apr 2026 17:15:38 INFO  [Epoch 29] Val Results: {'recall@1': 0.009042, 'recall@5': 0.031715, 'ndcg@5': 0.02037, 'recall@10': 0.048642, 'ndcg@10': 0.02581}
+Thu 09 Apr 2026 17:16:38 INFO  [Epoch 30] [time: 59.85s, train loss[('loss', 2.3171), ('kl_loss', 0.0154), ('code_loss', 2.3171), ('dec_cl_loss', 12.8428)]]
+Thu 09 Apr 2026 17:16:38 INFO  [Epoch 30] Current REC lr: [0.00039052084446303264]
+Thu 09 Apr 2026 17:17:46 INFO  [Epoch 30] Save model ./myckpt/scientific/Apr-09-2026_15-23-58109b/30.pt
+Thu 09 Apr 2026 17:17:46 INFO  [Epoch 30] Val Results: {'recall@1': 0.009846, 'recall@5': 0.032441, 'ndcg@5': 0.021126, 'recall@10': 0.049858, 'ndcg@10': 0.026744}
+Thu 09 Apr 2026 17:18:46 INFO  [Epoch 31] [time: 60.02s, train loss[('loss', 2.3105), ('kl_loss', 0.0152), ('code_loss', 2.3105), ('dec_cl_loss', 12.8365)]]
+Thu 09 Apr 2026 17:18:46 INFO  [Epoch 31] Current REC lr: [0.00038395669874474915]
+Thu 09 Apr 2026 17:19:52 INFO  [Epoch 31] Val Results: {'recall@1': 0.009728, 'recall@5': 0.029989, 'ndcg@5': 0.019885, 'recall@10': 0.047975, 'ndcg@10': 0.025675}
+Thu 09 Apr 2026 17:20:52 INFO  [Epoch 32] [time: 59.78s, train loss[('loss', 2.3046), ('kl_loss', 0.015), ('code_loss', 2.3046), ('dec_cl_loss', 12.8893)]]
+Thu 09 Apr 2026 17:20:52 INFO  [Epoch 32] Current REC lr: [0.00037726035393759286]
+Thu 09 Apr 2026 17:22:01 INFO  [Epoch 32] Val Results: {'recall@1': 0.00916, 'recall@5': 0.03148, 'ndcg@5': 0.020227, 'recall@10': 0.048897, 'ndcg@10': 0.025803}
+Thu 09 Apr 2026 17:23:01 INFO  [Epoch 33] [time: 60.02s, train loss[('loss', 2.2993), ('kl_loss', 0.0148), ('code_loss', 2.2993), ('dec_cl_loss', 12.8712)]]
+Thu 09 Apr 2026 17:23:01 INFO  [Epoch 33] Current REC lr: [0.0003704384185254288]
+Thu 09 Apr 2026 17:24:09 INFO  [Epoch 33] Val Results: {'recall@1': 0.009297, 'recall@5': 0.032461, 'ndcg@5': 0.020997, 'recall@10': 0.049642, 'ndcg@10': 0.026514}
+Thu 09 Apr 2026 17:25:09 INFO  [Epoch 34] [time: 60.25s, train loss[('loss', 2.2931), ('kl_loss', 0.0146), ('code_loss', 2.2931), ('dec_cl_loss', 12.8888)]]
+Thu 09 Apr 2026 17:25:09 INFO  [Epoch 34] Current REC lr: [0.00036349762493488667]
+Thu 09 Apr 2026 17:26:15 INFO  [Epoch 34] Val Results: {'recall@1': 0.009061, 'recall@5': 0.031637, 'ndcg@5': 0.020348, 'recall@10': 0.048779, 'ndcg@10': 0.02586}
+Thu 09 Apr 2026 17:27:15 INFO  [Epoch 35] [time: 59.69s, train loss[('loss', 2.2887), ('kl_loss', 0.0144), ('code_loss', 2.2887), ('dec_cl_loss', 12.8699)]]
+Thu 09 Apr 2026 17:27:15 INFO  [Epoch 35] Current REC lr: [0.0003564448228912682]
+Thu 09 Apr 2026 17:28:23 INFO  [Epoch 35] Val Results: {'recall@1': 0.008826, 'recall@5': 0.031421, 'ndcg@5': 0.020097, 'recall@10': 0.049387, 'ndcg@10': 0.025873}
+Thu 09 Apr 2026 17:29:23 INFO  [Epoch 36] [time: 59.97s, train loss[('loss', 2.2825), ('kl_loss', 0.0143), ('code_loss', 2.2825), ('dec_cl_loss', 12.885)]]
+Thu 09 Apr 2026 17:29:23 INFO  [Epoch 36] Current REC lr: [0.00034928697265869515]
+Thu 09 Apr 2026 17:30:28 INFO  [Epoch 36] Val Results: {'recall@1': 0.009689, 'recall@5': 0.031735, 'ndcg@5': 0.020743, 'recall@10': 0.048956, 'ndcg@10': 0.026278}
+Thu 09 Apr 2026 17:31:28 INFO  [Epoch 37] [time: 59.53s, train loss[('loss', 2.277), ('kl_loss', 0.014), ('code_loss', 2.277), ('dec_cl_loss', 12.8702)]]
+Thu 09 Apr 2026 17:31:28 INFO  [Epoch 37] Current REC lr: [0.00034203113817116957]
+Thu 09 Apr 2026 17:32:35 INFO  [Epoch 37] Val Results: {'recall@1': 0.009199, 'recall@5': 0.032735, 'ndcg@5': 0.020957, 'recall@10': 0.049289, 'ndcg@10': 0.026289}
+Thu 09 Apr 2026 17:33:35 INFO  [Epoch 38] [time: 60.17s, train loss[('loss', 2.2731), ('kl_loss', 0.0138), ('code_loss', 2.2731), ('dec_cl_loss', 12.8714)]]
+Thu 09 Apr 2026 17:33:35 INFO  [Epoch 38] Current REC lr: [0.0003346844800613229]
+Thu 09 Apr 2026 17:34:42 INFO  [Epoch 38] Val Results: {'recall@1': 0.009473, 'recall@5': 0.033167, 'ndcg@5': 0.021361, 'recall@10': 0.049701, 'ndcg@10': 0.026658}
+Thu 09 Apr 2026 17:35:41 INFO  [Epoch 39] [time: 59.36s, train loss[('loss', 2.267), ('kl_loss', 0.0137), ('code_loss', 2.267), ('dec_cl_loss', 12.8913)]]
+Thu 09 Apr 2026 17:35:41 INFO  [Epoch 39] Current REC lr: [0.00032725424859373687]
+Thu 09 Apr 2026 17:36:48 INFO  [Epoch 39] Val Results: {'recall@1': 0.009571, 'recall@5': 0.032147, 'ndcg@5': 0.020915, 'recall@10': 0.04923, 'ndcg@10': 0.026414}
+Thu 09 Apr 2026 17:37:48 INFO  [Epoch 40] [time: 60.02s, train loss[('loss', 2.2622), ('kl_loss', 0.0135), ('code_loss', 2.2622), ('dec_cl_loss', 12.892)]]
+Thu 09 Apr 2026 17:37:48 INFO  [Epoch 40] Current REC lr: [0.00031974777650980735]
+Thu 09 Apr 2026 17:38:55 INFO  [Epoch 40] Val Results: {'recall@1': 0.009238, 'recall@5': 0.032362, 'ndcg@5': 0.020822, 'recall@10': 0.049073, 'ndcg@10': 0.026187}
+Thu 09 Apr 2026 17:38:55 INFO  Loading model parameters from ./myckpt/scientific/Apr-09-2026_15-23-58109b/30.pt
+Thu 09 Apr 2026 17:40:05 INFO  Pre Best Validation Score: 0.019487
+Thu 09 Apr 2026 17:40:05 INFO  Pre Test Results: {'recall@1': 0.00508, 'recall@5': 0.018672, 'ndcg@5': 0.011813, 'recall@10': 0.031127, 'ndcg@10': 0.015808}
+Thu 09 Apr 2026 17:40:05 INFO  Best Validation Score: 0.026744  
+Thu 09 Apr 2026 17:40:05 INFO  Test Results: {'recall@1': 0.007179, 'recall@5': 0.024988, 'ndcg@5': 0.016082, 'recall@10': 0.038855, 'ndcg@10': 0.020556}
