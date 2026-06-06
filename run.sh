@@ -1,6 +1,5 @@
 DATASET=scientific
 
-
 accelerate launch --config_file accelerate_config_ddp.yaml main.py \
     --config ./config/${DATASET}.yaml \
     --lr_rec=0.005 \
@@ -10,4 +9,7 @@ accelerate launch --config_file accelerate_config_ddp.yaml main.py \
     --rec_kl_loss=0.0001 \
     --rec_dec_cl_loss=0.0003 \
     --id_kl_loss=0.0001 \
-    --id_dec_cl_loss=0.0003
+    --id_dec_cl_loss=0.0003 \
+    --use_features=True \
+    --num_features=256 \
+    --item_feature_path=item_features.npy

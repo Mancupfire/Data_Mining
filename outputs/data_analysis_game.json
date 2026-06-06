@@ -1,0 +1,138 @@
+{
+  "dataset": "game",
+  "amazon_category": "Amazon Video_Games",
+  "n_users": 94762,
+  "n_items": 25612,
+  "n_train_rows_augmented": 530300,
+  "n_valid_users": 94762,
+  "n_test_users": 94762,
+  "total_interactions_full_sequences": 801031,
+  "history_length": {
+    "mean": 7.4531,
+    "median": 5.0,
+    "min": 4,
+    "max": 50
+  },
+  "sequence_length_percentiles": {
+    "p25": 5,
+    "p50": 6,
+    "p75": 9,
+    "p90": 14,
+    "p95": 19,
+    "p99": 38
+  },
+  "sparsity": {
+    "interactions": 801031,
+    "users_x_items": 2427044344,
+    "density": 0.00033004,
+    "density_pct": 0.033004
+  },
+  "long_tail": {
+    "top_10_items_id_count": [
+      [
+        "B01N3ASPNV",
+        2949
+      ],
+      [
+        "B0086VPUHI",
+        2287
+      ],
+      [
+        "B07YBXFDYN",
+        2275
+      ],
+      [
+        "B00BGA9WK2",
+        1885
+      ],
+      [
+        "B077GG9D5D",
+        1853
+      ],
+      [
+        "B000N5Z2L4",
+        1834
+      ],
+      [
+        "B004RMK5QG",
+        1777
+      ],
+      [
+        "B07YBWT3PK",
+        1675
+      ],
+      [
+        "B00C1TTF86",
+        1531
+      ],
+      [
+        "B00BN5T30E",
+        1516
+      ]
+    ],
+    "top_1pct_items": 256,
+    "top_1pct_interaction_share": 0.1871,
+    "gini_coefficient": 0.6449,
+    "items_never_in_test_sequences": 0
+  },
+  "concrete_examples": [
+    {
+      "user_id": "AEVPPTMG...",
+      "first_5_history": [
+        "B08R5B7YS4",
+        "B0863MT183",
+        "B08P8P7686",
+        "B0B7LV3DN2",
+        "B09WMQ6DXG"
+      ],
+      "target_id": "B09JY72CNG",
+      "history_length": 5
+    },
+    {
+      "user_id": "AFZUK3MT...",
+      "first_5_history": [
+        "B00KTORA0K",
+        "B0792QJ28Y",
+        "B07VGRJDFY",
+        "B07J6ZZ83K"
+      ],
+      "target_id": "B0C3KYVDWT",
+      "history_length": 4
+    },
+    {
+      "user_id": "AFFZVSTU...",
+      "first_5_history": [
+        "B01GW3LRD2",
+        "B0848LKV51",
+        "B0BSD6NVYQ",
+        "B09P87WGQB",
+        "B09QZZPVCY"
+      ],
+      "target_id": "B0BP6NG2PH",
+      "history_length": 5
+    },
+    {
+      "user_id": "AFW2PDT3...",
+      "first_5_history": [
+        "B001ELJE9W",
+        "B001EYUWIG",
+        "B00004WGW1",
+        "B0000507UR",
+        "B00001LAE2"
+      ],
+      "target_id": "B00LINQ1HY",
+      "history_length": 36
+    },
+    {
+      "user_id": "AHT3NNPR...",
+      "first_5_history": [
+        "B0050SWP96",
+        "B07TJ141Q9",
+        "B087NMZMQ7",
+        "B01I14IASK"
+      ],
+      "target_id": "B07QRGCVXP",
+      "history_length": 4
+    }
+  ]
+}

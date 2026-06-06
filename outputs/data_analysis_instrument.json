@@ -1,0 +1,140 @@
+{
+  "dataset": "instrument",
+  "amazon_category": "Amazon Musical_Instruments",
+  "n_users": 57439,
+  "n_items": 24587,
+  "n_train_rows_augmented": 339519,
+  "n_valid_users": 57439,
+  "n_test_users": 57439,
+  "total_interactions_full_sequences": 506286,
+  "history_length": {
+    "mean": 7.8143,
+    "median": 6,
+    "min": 4,
+    "max": 50
+  },
+  "sequence_length_percentiles": {
+    "p25": 5,
+    "p50": 7,
+    "p75": 10,
+    "p90": 15,
+    "p95": 20,
+    "p99": 38
+  },
+  "sparsity": {
+    "interactions": 506286,
+    "users_x_items": 1412252693,
+    "density": 0.0003585,
+    "density_pct": 0.03585
+  },
+  "long_tail": {
+    "top_10_items_id_count": [
+      [
+        "B09857JRP2",
+        2437
+      ],
+      [
+        "B0BCK6L7S5",
+        1924
+      ],
+      [
+        "B0BSGM6CQ9",
+        1714
+      ],
+      [
+        "B0BPJ4Q6FJ",
+        1491
+      ],
+      [
+        "B0BTC9YJ2W",
+        1360
+      ],
+      [
+        "B08R5GM6YB",
+        1248
+      ],
+      [
+        "B0BPLFP5P6",
+        1221
+      ],
+      [
+        "B0BHSG5C3G",
+        1209
+      ],
+      [
+        "B004XNK7AI",
+        1191
+      ],
+      [
+        "B08JMQR2JK",
+        997
+      ]
+    ],
+    "top_1pct_items": 246,
+    "top_1pct_interaction_share": 0.1821,
+    "gini_coefficient": 0.5679,
+    "items_never_in_test_sequences": 0
+  },
+  "concrete_examples": [
+    {
+      "user_id": "AHV6QCNB...",
+      "first_5_history": [
+        "B00OG187HC",
+        "B00O4VH9YG",
+        "B003LPTAYI",
+        "B07711ZF5C",
+        "B06XSLM5YZ"
+      ],
+      "target_id": "B09XHMKZYK",
+      "history_length": 10
+    },
+    {
+      "user_id": "AHB5CGLY...",
+      "first_5_history": [
+        "B07MJHPDBG",
+        "B01M2XPNLC",
+        "B07B9W2XFS",
+        "B0049Z6VKK",
+        "B00KMFUCC4"
+      ],
+      "target_id": "B002SDY2OC",
+      "history_length": 21
+    },
+    {
+      "user_id": "AEDHXXX2...",
+      "first_5_history": [
+        "B073LPHGND",
+        "B06X9KG3HW",
+        "B007534LFK",
+        "B0B31RCL2G",
+        "B0BT9R8MMV"
+      ],
+      "target_id": "B015OP6OOG",
+      "history_length": 6
+    },
+    {
+      "user_id": "AER6WLSJ...",
+      "first_5_history": [
+        "B002KG9LWU",
+        "B0772STLBS",
+        "B0716DK86D",
+        "B0002GZQGU",
+        "B0BK5CXZBT"
+      ],
+      "target_id": "B0912NHJF8",
+      "history_length": 26
+    },
+    {
+      "user_id": "AGJY4LG7...",
+      "first_5_history": [
+        "B072DXPHC3",
+        "B0BTTN8RL1",
+        "B0B1LK9SXB",
+        "B09NWCD36N",
+        "B0BKZ3GCGR"
+      ],
+      "target_id": "B0BG95DG2H",
+      "history_length": 5
+    }
+  ]
+}

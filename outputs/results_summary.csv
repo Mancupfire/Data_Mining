@@ -1,0 +1,2 @@
+dataset,variant,variant_key,run_type,status,metric_source,best_epoch,n_val_evals,best_val_ndcg@10,recall@1,recall@5,ndcg@5,recall@10,ndcg@10,log
+scientific,Full SEA-Rec (full schedule),full,full,DONE,final_test,62,99,0.026857,0.007473,0.026498,0.016934,0.041875,0.021862,logs/etegrec_scientific_20260604_192028.log

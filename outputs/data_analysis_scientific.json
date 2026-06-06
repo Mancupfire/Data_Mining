@@ -1,0 +1,139 @@
+{
+  "dataset": "scientific",
+  "amazon_category": "Amazon Industrial_and_Scientific",
+  "n_users": 50985,
+  "n_items": 25848,
+  "n_train_rows_augmented": 259992,
+  "n_valid_users": 50985,
+  "n_test_users": 50985,
+  "total_interactions_full_sequences": 409394,
+  "history_length": {
+    "mean": 7.0297,
+    "median": 5,
+    "min": 4,
+    "max": 50
+  },
+  "sequence_length_percentiles": {
+    "p25": 5,
+    "p50": 6,
+    "p75": 9,
+    "p90": 13,
+    "p95": 17,
+    "p99": 31
+  },
+  "sparsity": {
+    "interactions": 409394,
+    "users_x_items": 1317860280,
+    "density": 0.00031065,
+    "density_pct": 0.031065
+  },
+  "long_tail": {
+    "top_10_items_id_count": [
+      [
+        "B09WW4Z413",
+        2129
+      ],
+      [
+        "B0C7PJFBBK",
+        825
+      ],
+      [
+        "B095MTT7D3",
+        812
+      ],
+      [
+        "B07ZJPCQBN",
+        769
+      ],
+      [
+        "B0825V583C",
+        695
+      ],
+      [
+        "B0BGQR74H1",
+        682
+      ],
+      [
+        "B07VBWZDQD",
+        653
+      ],
+      [
+        "B07P6SKFH1",
+        638
+      ],
+      [
+        "B07PJ482SV",
+        622
+      ],
+      [
+        "B08PHYDBDG",
+        596
+      ]
+    ],
+    "top_1pct_items": 258,
+    "top_1pct_interaction_share": 0.1375,
+    "gini_coefficient": 0.489,
+    "items_never_in_test_sequences": 0
+  },
+  "concrete_examples": [
+    {
+      "user_id": "AFNT6ZJC...",
+      "first_5_history": [
+        "B00DX7KEP8",
+        "B098BR67DJ",
+        "B08Y97BK7N",
+        "B0B6YT7HNF",
+        "B0883CDD2Z"
+      ],
+      "target_id": "B09HSD6Q22",
+      "history_length": 5
+    },
+    {
+      "user_id": "AFSKPY37...",
+      "first_5_history": [
+        "B00S4TS80S",
+        "B07WV7HYWM",
+        "B089LRBXVC",
+        "B07ZL56TTJ",
+        "B0C3HYP88R"
+      ],
+      "target_id": "B0C212RLW1",
+      "history_length": 6
+    },
+    {
+      "user_id": "AFZUK3MT...",
+      "first_5_history": [
+        "B00KE233NU",
+        "B01BI9ZEU2",
+        "B07VFT85JH",
+        "B07RGLZ63F",
+        "B00QB4F298"
+      ],
+      "target_id": "B08JGFGQXL",
+      "history_length": 50
+    },
+    {
+      "user_id": "AE2TA5GQ...",
+      "first_5_history": [
+        "B001C02FW8",
+        "B07GGZT8S7",
+        "B08FT9FF26",
+        "B09QMQFBBV"
+      ],
+      "target_id": "B0B8QGT7TB",
+      "history_length": 4
+    },
+    {
+      "user_id": "AFFZVSTU...",
+      "first_5_history": [
+        "B07XJXT42Z",
+        "B0C61KT7JD",
+        "B085VM673N",
+        "B09BV9KW46",
+        "B09X8ZN1XT"
+      ],
+      "target_id": "B0BYTHL45Q",
+      "history_length": 10
+    }
+  ]
+}

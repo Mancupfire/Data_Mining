@@ -9,17 +9,15 @@ from tqdm import tqdm
 import json
 import math
 from colorama import init
-from utils import ensure_dir, set_color, get_local_time
+from utils import ensure_dir, set_color, get_local_time, log, safe_load, balance, conflict
+from metrics import *
 from accelerate import PartialState
 from model import Model
 from transformers import get_linear_schedule_with_warmup, get_constant_schedule_with_warmup
 from transformers.optimization import get_scheduler
-from metrics import *
-from utils import *
 from collections import defaultdict
 from logging import getLogger
 init(autoreset=True)
-    
     
 class Trainer(object):
     def __init__(self, config, model_rec: Model, model_id, accelerator, train_data=None,
@@ -82,8 +80,8 @@ class Trainer(object):
 
         if self.lr_scheduler_type == "linear":
             self.rec_lr_scheduler = get_linear_schedule_with_warmup(optimizer=self.rec_optimizer,
-                                                                    num_warmup_steps=self.warmup_steps,
-                                                                    num_training_steps=self.max_steps)
+                                                          num_warmup_steps=self.warmup_steps,
+                                                          num_training_steps=self.max_steps)
             self.id_lr_scheduler = get_linear_schedule_with_warmup(optimizer=self.id_optimizer,
                                                                    num_warmup_steps=self.warmup_steps // self.cycle,
                                                                    num_training_steps=self.max_steps // self.cycle)
@@ -162,13 +160,12 @@ class Trainer(object):
 
     @staticmethod
     def compute_discrete_contrastive_loss_kl(x_logits, y_logits):
-        # kl loss
         code_num = x_logits.size(-1)
         x_logits = F.log_softmax(x_logits.view(-1, code_num), dim=-1)
         y_logits = F.log_softmax(y_logits.view(-1, code_num), dim=-1)
         loss = F.kl_div(x_logits, y_logits, reduction='batchmean', log_target=True)
         return loss
-                                          
+                                           
     @staticmethod
     def compute_contrastive_loss(query_embeds, semantic_embeds, temperature=0.07, sim="cos", gathered=True):
         if gathered:
@@ -205,7 +202,6 @@ class Trainer(object):
         if epochs is None:
             epochs = self.epochs
         max_steps = math.ceil(epochs * num_update_steps_per_epoch)
-
         return max_steps
 
     def _train_epoch_rec(self, epoch_idx, loss_w, verbose=True):
@@ -225,14 +221,16 @@ class Trainer(object):
 
         for batch_idx, batch in enumerate(iter_data):
             with self.accelerator.accumulate(self.model_rec):
-
                 total_num += 1
-                
                 self.rec_optimizer.zero_grad()
                 
                 input_ids = batch['input_ids'].to(self.device)
                 attention_mask = batch["attention_mask"].to(self.device)
                 targets = batch["targets"].to(self.device)
+                
+                item_features = batch.get("item_features", None)
+                if item_features is not None:
+                    item_features = item_features.to(self.device)
 
                 B = input_ids.size(0)
                 input_ids = self.all_item_code[input_ids].contiguous().clone().view(B, -1)
@@ -252,10 +250,10 @@ class Trainer(object):
 
                 outputs = self.model_rec(input_ids=input_ids,
                                          attention_mask=attention_mask,
-                                         labels=labels)
+                                         labels=labels,
+                                         item_features=item_features)
           
-                logits = outputs.logits  # (batch, code_len, code_num)
-
+                logits = outputs.logits
                 seq_project_latents = outputs.seq_project_latents
                 dec_latents = outputs.dec_latents
                 
@@ -266,13 +264,8 @@ class Trainer(object):
                 
                 code_loss = F.cross_entropy(logits.view(-1, self.code_num), labels.detach().reshape(-1)) 
                 
-
-                # kl divergence
-                kl_loss = self.compute_discrete_contrastive_loss_kl(seq_code_logits[unq_index], 
-                                                                    target_code_logits[unq_index]) + \
-                          self.compute_discrete_contrastive_loss_kl(target_code_logits[unq_index],
-                                                                    seq_code_logits[unq_index])
-            
+                kl_loss = self.compute_discrete_contrastive_loss_kl(seq_code_logits[unq_index], target_code_logits[unq_index]) + \
+                          self.compute_discrete_contrastive_loss_kl(target_code_logits[unq_index], seq_code_logits[unq_index])
                 
                 dec_cl_loss = self.compute_contrastive_loss(target_recon_embs[unq_index], dec_latents[unq_index], sim=self.sim, gathered=False) + \
                           self.compute_contrastive_loss(dec_latents[unq_index], target_recon_embs[unq_index], sim=self.sim, gathered=False)
@@ -286,17 +279,15 @@ class Trainer(object):
                 loss = sum([v * loss_w[k] for k, v in losses.items()])
 
                 self.accelerator.backward(loss)
-
                 self.accelerator.clip_grad_norm_(self.model_rec.parameters(), 1)
                 self.rec_optimizer.step()
                 self.rec_lr_scheduler.step()
 
-                
                 kl_loss_mean = self.accelerator.gather(kl_loss).mean().item()
                 code_loss_mean = self.accelerator.gather(code_loss).mean().item()
                 dec_cl_loss_mean = self.accelerator.gather(dec_cl_loss).mean().item()
-                
                 loss_mean = self.accelerator.gather(loss).mean().item()
+                
                 loss = dict(
                     loss=loss_mean,
                     kl_loss=kl_loss_mean,
@@ -312,13 +303,11 @@ class Trainer(object):
             total_loss[k] = round(total_loss[k]/total_num, 4)
                 
         self.accelerator.wait_for_everyone()
-        
         return total_loss
     
 
     def _train_epoch_id(self, epoch_idx, loss_w, verbose=True):
         self.model_id.train()
-
 
         total_num = 0
         total_loss = defaultdict(int)
@@ -333,18 +322,20 @@ class Trainer(object):
         for batch_idx, batch in enumerate(iter_data):
             with self.accelerator.accumulate(self.model_id):
                 total_num += 1
-                
                 self.id_optimizer.zero_grad()
                 
                 input_ids = batch['input_ids'].to(self.device)
                 attention_mask = batch["attention_mask"].to(self.device)
                 targets = batch["targets"].to(self.device)
 
+                item_features = batch.get("item_features", None)
+                if item_features is not None:
+                    item_features = item_features.to(self.device)
+
                 B = input_ids.size(0)
                 input_ids = self.all_item_code[input_ids].contiguous().clone().view(B, -1)
                 labels = self.all_item_code[targets].contiguous().clone().view(B, -1)
                 attention_mask = (input_ids != -1).bool() 
-                
                 
                 target_flatten = targets.flatten()
                 if dist.is_initialized():
@@ -363,13 +354,12 @@ class Trainer(object):
                     unq_semantic_embs = self.model_rec.semantic_embedding(unq_input)
                 unq_recon_embs, commit_loss, _, _, _ = self.model_id(unq_semantic_embs)
 
-
                 outputs = self.model_rec(input_ids=input_ids,
                                          attention_mask=attention_mask,
-                                         labels=labels)
+                                         labels=labels,
+                                         item_features=item_features)
           
-                logits = outputs.logits  # (batch, code_len, code_num)
-
+                logits = outputs.logits
                 seq_project_latents = outputs.seq_project_latents
                 dec_latents = outputs.dec_latents
                 
@@ -377,7 +367,6 @@ class Trainer(object):
                     _, _, _, _, seq_code_logits = self.model_id.module.rq(seq_project_latents)
                 else:
                     _, _, _, _, seq_code_logits = self.model_id.rq(seq_project_latents)
-                
                 
                 code_loss = F.cross_entropy(logits.view(-1, self.code_num), labels.detach().reshape(-1)) 
                 
@@ -393,12 +382,8 @@ class Trainer(object):
                 
                 vq_loss = recon_loss + self.alpha * commit_loss
 
-                # kl divergence
-                kl_loss = self.compute_discrete_contrastive_loss_kl(seq_code_logits[unq_index], 
-                                                                    target_code_logits[unq_index]) + \
-                          self.compute_discrete_contrastive_loss_kl(target_code_logits[unq_index],
-                                                                    seq_code_logits[unq_index])
-                
+                kl_loss = self.compute_discrete_contrastive_loss_kl(seq_code_logits[unq_index], target_code_logits[unq_index]) + \
+                          self.compute_discrete_contrastive_loss_kl(target_code_logits[unq_index], seq_code_logits[unq_index])
                 
                 dec_cl_loss = self.compute_contrastive_loss(target_recon_embs[unq_index], dec_latents[unq_index],
                                                             sim=self.sim, gathered=False) + \
@@ -415,18 +400,16 @@ class Trainer(object):
                 loss = sum([v * loss_w[k] for k, v in losses.items()])
 
                 self.accelerator.backward(loss)
-
                 self.accelerator.clip_grad_norm_(self.model_id.parameters(), 1)
                 self.id_optimizer.step()
                 self.id_lr_scheduler.step()
-                
                 
                 vq_loss_mean = self.accelerator.gather(vq_loss).mean().item()
                 code_loss_mean = self.accelerator.gather(code_loss).mean().item()
                 kl_loss_mean = self.accelerator.gather(kl_loss).mean().item()
                 dec_cl_loss_mean = self.accelerator.gather(dec_cl_loss).mean().item()
-                
                 loss_mean = self.accelerator.gather(loss).mean().item()
+                
                 loss = dict(
                     loss=loss_mean,
                     vq_loss=vq_loss_mean,
@@ -443,7 +426,6 @@ class Trainer(object):
             total_loss[k] = round(total_loss[k]/total_num, 4)
                 
         self.accelerator.wait_for_everyone()
-        
         return total_loss
 
     def safe_save(self, epoch, code):
@@ -460,28 +442,25 @@ class Trainer(object):
         return last_checkpoint
 
     def evaluate(self, outputs, labels):
-        batch_size, k, _ = outputs.shape  # Assuming outputs is [batch_size, 10, seq_len]
+        batch_size, k, _ = outputs.shape
         recall_at_1, recall_at_5, recall_at_10 = [], [], []
         ndcg_at_1, ndcg_at_5, ndcg_at_10 = [], [], []
 
         for i in range(batch_size):
-            label = labels[i].unsqueeze(0)  # [1, seq_len]
+            label = labels[i].unsqueeze(0)
             out = outputs[i]
                 
-            matches = torch.all(torch.eq(out.unsqueeze(1), label.unsqueeze(0)), dim=2)  # [10, 1, seq_len] -> [10, 1]
-            matches = matches.any(dim=1).cpu().numpy()  # [10]
+            matches = torch.all(torch.eq(out.unsqueeze(1), label.unsqueeze(0)), dim=2)
+            matches = matches.any(dim=1).cpu().numpy()
 
-            # Recall
             recall_at_1.append(matches[:1].sum() / 1.0)
-            recall_at_5.append(matches[:5].sum() / 1.0)  # Assuming each label has only 1 correct match.
+            recall_at_5.append(matches[:5].sum() / 1.0)
             recall_at_10.append(matches.sum() / 1.0)
 
-            # NDCG (binary relevance)
             ndcg_at_1.append(ndcg_at_k(matches, 1))
             ndcg_at_5.append(ndcg_at_k(matches, 5))
             ndcg_at_10.append(ndcg_at_k(matches, 10))
 
-        # Calculate mean metrics
         metrics = {
             "recall@1": np.sum(recall_at_1),
             "recall@5": np.sum(recall_at_5),
@@ -490,7 +469,6 @@ class Trainer(object):
             "ndcg@5": np.sum(ndcg_at_5),
             "ndcg@10": np.sum(ndcg_at_10),
         }
-
         return metrics
 
     def _generate_train_loss_output(self, epoch_idx, s_time, e_time, loss_dict):
@@ -511,7 +489,6 @@ class Trainer(object):
         self.all_item_code = torch.tensor(all_item_code).to(self.device)
 
         for epoch_idx in range(self.epochs):
-                
             if epoch_idx % self.cycle == 0:
                 loss_w['vq_loss'] = self.config['id_vq_loss']
                 loss_w['code_loss'] = self.config['id_code_loss'] if epoch_idx >= self.warm_epoch else 0
@@ -535,9 +512,7 @@ class Trainer(object):
                 for param in self.model_id.parameters():
                     param.requires_grad = False
 
-            
             self.accelerator.wait_for_everyone()
-            # train
             training_start_time = time()
             if epoch_idx % self.cycle == 0:
                 train_loss = self._train_epoch_id(epoch_idx, loss_w=loss_w, verbose=verbose)
@@ -553,7 +528,6 @@ class Trainer(object):
             
             self.log(train_loss_output)
             self.log(f'[Epoch {epoch_idx}] REC lr: {self.rec_lr_scheduler.get_lr()} ID lr: {self.id_lr_scheduler.get_lr()}')
-            
 
             if (epoch_idx + 1) % self.eval_step == 0:
                 metrics = self._test_epoch(test_data=self.valid_data, code=self.all_item_code, verbose=verbose)
@@ -583,14 +557,17 @@ class Trainer(object):
         stop = False
         cur_eval_step = 0
         self.best_score = 0
-        self.early_stop = 10
-        self.eval_step = 1
-        self.epochs = 100
+        # Backward-compatible overrides: defaults reproduce the original hardcoded
+        # finetune schedule (early_stop=10, epochs=100). Set finetune_early_stop /
+        # finetune_epochs in config/CLI only to run shorter controlled experiments.
+        self.early_stop = self.config.get('finetune_early_stop', 10)
+        self.eval_step = self.config.get('finetune_eval_step', 1)
+        self.epochs = self.config.get('finetune_epochs', 100)
         loss_w = defaultdict(int)
 
         model_rec = self.accelerator.unwrap_model(self.model_rec)
         self.rec_optimizer = self._build_optimizer(model_rec, 5e-4, self.weight_decay)
-        train_steps = self.get_train_steps(epochs=100) * self.world_size
+        train_steps = self.get_train_steps(epochs=self.epochs) * self.world_size
         self.rec_lr_scheduler = get_scheduler(name='cosine',
                                               optimizer=self.rec_optimizer,
                                               num_warmup_steps=0,
@@ -615,9 +592,7 @@ class Trainer(object):
             param.requires_grad = False
 
         for epoch_idx in range(self.epochs):
-            
             self.accelerator.wait_for_everyone()
-            # train
             training_start_time = time()
             train_loss = self._train_epoch_rec(epoch_idx, loss_w=loss_w, verbose=verbose)
             training_end_time = time()
@@ -625,10 +600,8 @@ class Trainer(object):
             train_loss_output = self._generate_train_loss_output(
                 epoch_idx, training_start_time, training_end_time, train_loss
             )
-            
             self.log(train_loss_output)
             self.log(f'[Epoch {epoch_idx}] Current REC lr: {self.rec_lr_scheduler.get_lr()}')
-            
 
             if (epoch_idx + 1) % self.eval_step == 0:
                 metrics = self._test_epoch(test_data=self.valid_data, code=self.all_item_code, verbose=verbose)
@@ -652,7 +625,6 @@ class Trainer(object):
             if stop:
                 break
         
-
         return self.best_score
     
     @torch.no_grad()
@@ -661,7 +633,6 @@ class Trainer(object):
         if self.test_data is not None:
             metrics = self._test_epoch(load_best_model=True, model_file=model_file,
                                        prefix_allowed_tokens_fn=prefix_allowed_tokens_fn, verbose=verbose)
-
             test_results = metrics
         return test_results
 
@@ -683,9 +654,7 @@ class Trainer(object):
 
             code = json.load(open(ckpt_file[:-3]+'.code.json'))
 
-            message_output = "Loading model parameters from {}".format(
-                ckpt_file
-            )
+            message_output = "Loading model parameters from {}".format(ckpt_file)
             self.log(message_output)
 
         self.model_rec.eval()
@@ -715,18 +684,22 @@ class Trainer(object):
             input_ids, attention_mask, labels \
                 = data["input_ids"].to(self.device), data["attention_mask"].to(self.device), data["targets"].to(self.device)
 
+            item_features = data.get("item_features", None)
+            if item_features is not None:
+                item_features = item_features.to(self.device)
+
             B = input_ids.size(0)
             input_ids = item_code[input_ids].contiguous().clone().view(B, -1)
             labels = item_code[labels].contiguous().clone().view(B, -1)
             attention_mask = (input_ids != -1).bool() 
 
             if dist.is_initialized():
-                preds = self.model_rec.module.generate(input_ids=input_ids, attention_mask=attention_mask, n_return_sequences=10)
+                preds = self.model_rec.module.generate(input_ids=input_ids, attention_mask=attention_mask, n_return_sequences=10, item_features=item_features)
                 all_preds, all_labels = self.accelerator.gather_for_metrics((preds, labels))
                 _metrics = self.evaluate(all_preds, all_labels)
                 total += len(all_labels)
             else:
-                preds = self.model_rec.generate(input_ids=input_ids, attention_mask=attention_mask, n_return_sequences=10)
+                preds = self.model_rec.generate(input_ids=input_ids, attention_mask=attention_mask, n_return_sequences=10, item_features=item_features)
                 _metrics = self.evaluate(preds, labels)
                 total += len(labels)
 
@@ -749,7 +722,6 @@ class Trainer(object):
             all_item_embs = self.model_rec.semantic_embedding.weight.data[1:]
             all_item_prefix = self.model_id.get_indices(all_item_embs).detach().cpu().numpy()
         
-
         if verbose:
             for i in range(self.code_length-1):
                 self.log(f'[Epoch {epoch_idx}] Evaluation {self.save_path}/{epoch_idx}.pt Code balance {balance(all_item_prefix[:, i].tolist(), ncentroids=self.code_num)} Used code num of level {i+1}: {len(set(all_item_prefix[:, i].tolist()))}')
@@ -777,4 +749,3 @@ class Trainer(object):
 
     def log(self, message, level='info'):
         return log(message, self.accelerator, self.logger, level=level)
-

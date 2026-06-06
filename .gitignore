@@ -1,0 +1,48 @@
+
+# =========================
+# Minh SEA-Rec ignore rules
+# =========================
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Large datasets / raw files
+dataset/
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Large checkpoints / model weights
+myckpt/
+RQVAE/rqvae_ckpt/
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+
+# Logs
+logs/
+*.log
+nohup.out
+
+# Temporary report packages
+outputs/minh_report_package_*/
+outputs/minh_report_package_*.tar.gz
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,7 @@
+dataset,variant,variant_key,run_type,status,metric_source,best_epoch,n_val_evals,best_val_ndcg@10,recall@1,recall@5,ndcg@5,recall@10,ndcg@10,log
+scientific,Full SEA-Rec (full schedule),full,full,DONE,final_test,62,99,0.026857,0.007473,0.026498,0.016934,0.041875,0.021862,logs/etegrec_scientific_20260604_192028.log
+scientific,Full SEA-Rec (short),full_short,short,DONE,final_test,13,14,0.025613,0.007394,0.02487,0.016149,0.039933,0.021013,logs/ablation_scientific_full_short_20260605_173533.log
+scientific,w/o KL loss,no_kl,short,DONE,final_test,13,14,0.025581,0.007198,0.024831,0.016011,0.039874,0.02086,logs/ablation_scientific_no_kl_20260605_192543.log
+scientific,w/o Decoder-CL,no_deccl,short,DONE,final_test,13,14,0.025487,0.007179,0.024674,0.015918,0.039757,0.020778,logs/ablation_scientific_no_deccl_20260605_211448.log
+scientific,w/o Alignment (KL+DecCL),no_align,short,DONE,final_test,13,14,0.025793,0.007139,0.024949,0.016074,0.040228,0.020985,logs/ablation_scientific_no_align_20260605_225456.log
+scientific,w/o Feature Adapter,no_features,short,DONE,final_test,11,14,0.025636,0.007355,0.025615,0.016463,0.040757,0.021334,logs/ablation_scientific_no_features_20260606_003953.log
