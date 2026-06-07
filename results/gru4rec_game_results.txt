@@ -1,0 +1,11 @@
+Model: gru4rec
+Dataset: game
+Split: test
+Num test users: 94762
+
+Recall@1: 0.0018
+NDCG@1: 0.0018
+Recall@5: 0.0124
+NDCG@5: 0.0072
+Recall@10: 0.0212
+NDCG@10: 0.0100

@@ -1,0 +1,11 @@
+Model: gru4rec
+Dataset: beauty
+Split: test
+Num test users: 22363
+
+Recall@1: 0.0010
+NDCG@1: 0.0010
+Recall@5: 0.0052
+NDCG@5: 0.0029
+Recall@10: 0.0086
+NDCG@10: 0.0040

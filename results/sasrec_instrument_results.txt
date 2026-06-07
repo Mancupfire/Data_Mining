@@ -1,0 +1,11 @@
+Model: sasrec
+Dataset: instrument
+Split: test
+Num test users: 57439
+
+Recall@1: 0.0035
+NDCG@1: 0.0035
+Recall@5: 0.0138
+NDCG@5: 0.0085
+Recall@10: 0.0241
+NDCG@10: 0.0118

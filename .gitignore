@@ -1,0 +1,22 @@
+# data -- too large for git
+data/raw/
+data/beauty/
+data/sports/
+data/scientific/
+data/game/
+data/instrument/
+data/etegrec/
+
+# model artifacts
+checkpoints/
+*.npy
+*.pth
+*.zip
+
+# runtime / logs
+venv/
+logs/
+run.log
+__pycache__/
+*.pyc
+.DS_Store

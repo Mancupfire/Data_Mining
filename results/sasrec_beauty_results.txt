@@ -1,0 +1,11 @@
+Model: sasrec
+Dataset: beauty
+Split: test
+Num test users: 22363
+
+Recall@1: 0.0011
+NDCG@1: 0.0011
+Recall@5: 0.0048
+NDCG@5: 0.0030
+Recall@10: 0.0093
+NDCG@10: 0.0044

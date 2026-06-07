@@ -1,0 +1,11 @@
+Model: sasrec
+Dataset: sports
+Split: test
+Num test users: 35598
+
+Recall@1: 0.0016
+NDCG@1: 0.0016
+Recall@5: 0.0051
+NDCG@5: 0.0033
+Recall@10: 0.0083
+NDCG@10: 0.0044
