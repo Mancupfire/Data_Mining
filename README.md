@@ -1,6 +1,6 @@
 # Baseline Models for Sequential Recommendation
 
-This is the baseline component of my final project. I implemented and ran two well-known sequential recommendation models — SASRec and GRU4Rec — on three Amazon product review datasets to establish baseline performance numbers. The goal is to compare these against the main method we study in the project.
+This is the baseline component of the final project. I implemented and ran two well-known sequential recommendation models - SASRec and GRU4Rec - on three Amazon product review datasets to establish baseline performance numbers. The goal is to compare these against the main method we study in the project.
 
 ## Models
 
@@ -8,7 +8,7 @@ This is the baseline component of my final project. I implemented and ran two we
 
 **GRU4Rec** (Hidasi et al., 2016) models user sequences with a Gated Recurrent Unit (GRU). It was one of the first deep learning approaches to session-based recommendation and remains a solid baseline.
 
-Both models are trained with BPR-style binary cross-entropy loss (one positive item vs. one sampled negative per step) and evaluated under the full-ranking protocol — the target item is ranked against the entire item catalog, with training items masked out.
+Both models are trained with BPR-style binary cross-entropy loss (one positive item vs. one sampled negative per step) and evaluated under the full-ranking protocol - the target item is ranked against the entire item catalog, with training items masked out.
 
 ## Datasets
 
