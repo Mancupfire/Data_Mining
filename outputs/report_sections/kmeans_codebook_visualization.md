@@ -3,8 +3,12 @@
 _Figures in `outputs/figures/`. Numbers from `outputs/codebook_utilization_scientific_{before,after}.json` (and `..._game_before.json`), produced by `scripts/analyze_codebook_utilization.py`; plotted by `scripts/plot_codebook_utilization.py`._
 
 ## What the codebook does (for non-experts)
+> **Embedding source:** the 256-d item vectors here are **SASRec collaborative embeddings** from
+> the **ETEGRec authors' preprocessed Google Drive release** (`*_emb_256.npy`) — **not
+> Sentence-BERT / text-content embeddings**. See `embedding_provenance.md`.
+
 ETEGRec/SEA-Rec does **not** feed raw item IDs to the recommender. Each item's 256-d
-content embedding is passed through a **Residual-Quantized VAE (RQ-VAE)**, which turns it
+SASRec collaborative embedding is passed through a **Residual-Quantized VAE (RQ-VAE)**, which turns it
 into a short sequence of **discrete codes** — here **3 levels × 256 codes** (a 4th code
 disambiguates collisions). Each level has its own **codebook**: 256 learnable vectors
 ("centroids"). An item is encoded by, at each level, snapping the residual to the nearest
@@ -18,6 +22,12 @@ embeddings (`kmeans_init`). Random initialization can leave many codes unused
 initialization starts the centroids on real embedding clusters, which improves stability
 and convergence. In this repo the shipped RQ-VAE was pretrained with **random init**
 (`kmeans_init: False`), and we measured utilization before vs after end-to-end training.
+
+> **Scope of this section:** the **before-vs-after utilization visualization is COMPLETE** (below).
+> A **dedicated random-init vs. k-means-init ablation is NOT done** — that requires re-pretraining
+> the RQ-VAE with `kmeans_init: True`. It is **future work**, scoped in
+> `kmeans_ablation_future_work.md`. The two are different deliverables: this section *visualizes*
+> the shipped random-init codebook; the ablation would *compare* two init strategies head-to-head.
 
 ## Utilization metrics we report
 - **Used / dead codes** — how many of the 256 codes per level are ever assigned (dead = never used).
@@ -58,8 +68,10 @@ _After-training game visualization is pending the full game run._
 3. **K-means relevance.** Because utilization was already ~100% with high entropy *before*
    training (random-init RQ-VAE already near-ideal on these data), **k-means init has little
    headroom to raise utilization** here. Its value would be **convergence stability /
-   semantic organization**, not higher final utilization. To test it: re-pretrain the RQ-VAE
-   with `--kmeans_init True` (`RQVAE/run_pretrain.sh`) and repoint `rqvae_path`.
+   semantic organization**, not higher final utilization. **This is a hypothesis, not a measured
+   result** — the dedicated random-vs-k-means ablation is **future work** (see
+   `kmeans_ablation_future_work.md`): re-pretrain the RQ-VAE with `kmeans_init: True`
+   (`RQVAE/run_pretrain.sh`) and repoint `rqvae_path`.
 
 ### How to reproduce
 ```bash
