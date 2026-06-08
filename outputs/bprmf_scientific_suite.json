@@ -1,0 +1,278 @@
+{
+  "dataset": "scientific",
+  "tuning_seed": 2020,
+  "tuning_runs": [
+    {
+      "seed": 2020,
+      "config": {
+        "dim": 64,
+        "learning_rate": 0.05,
+        "reg": 0.0001,
+        "epochs": 12,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 3,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 12,
+      "validation_best": {
+        "recall@1": 0.001942,
+        "recall@5": 0.007061,
+        "recall@10": 0.011356,
+        "ndcg@1": 0.001942,
+        "ndcg@5": 0.004485,
+        "ndcg@10": 0.005857
+      },
+      "test": {
+        "recall@1": 0.001863,
+        "recall@5": 0.006806,
+        "recall@10": 0.011121,
+        "ndcg@1": 0.001863,
+        "ndcg@5": 0.004281,
+        "ndcg@10": 0.005665
+      }
+    },
+    {
+      "seed": 2020,
+      "config": {
+        "dim": 128,
+        "learning_rate": 0.05,
+        "reg": 0.0001,
+        "epochs": 12,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 3,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 12,
+      "validation_best": {
+        "recall@1": 0.001432,
+        "recall@5": 0.006963,
+        "recall@10": 0.011964,
+        "ndcg@1": 0.001432,
+        "ndcg@5": 0.004223,
+        "ndcg@10": 0.005837
+      },
+      "test": {
+        "recall@1": 0.001491,
+        "recall@5": 0.006414,
+        "recall@10": 0.010827,
+        "ndcg@1": 0.001491,
+        "ndcg@5": 0.003929,
+        "ndcg@10": 0.005335
+      }
+    },
+    {
+      "seed": 2020,
+      "config": {
+        "dim": 64,
+        "learning_rate": 0.02,
+        "reg": 0.0001,
+        "epochs": 12,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 3,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 12,
+      "validation_best": {
+        "recall@1": 0.001648,
+        "recall@5": 0.003589,
+        "recall@10": 0.004609,
+        "ndcg@1": 0.001648,
+        "ndcg@5": 0.002651,
+        "ndcg@10": 0.002981
+      },
+      "test": {
+        "recall@1": 0.001157,
+        "recall@5": 0.002334,
+        "recall@10": 0.002981,
+        "ndcg@1": 0.001157,
+        "ndcg@5": 0.001764,
+        "ndcg@10": 0.00197
+      }
+    },
+    {
+      "seed": 2020,
+      "config": {
+        "dim": 128,
+        "learning_rate": 0.02,
+        "reg": 1e-05,
+        "epochs": 12,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 3,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 12,
+      "validation_best": {
+        "recall@1": 0.001628,
+        "recall@5": 0.003707,
+        "recall@10": 0.004845,
+        "ndcg@1": 0.001628,
+        "ndcg@5": 0.002724,
+        "ndcg@10": 0.003092
+      },
+      "test": {
+        "recall@1": 0.001157,
+        "recall@5": 0.002707,
+        "recall@10": 0.003648,
+        "ndcg@1": 0.001157,
+        "ndcg@5": 0.001963,
+        "ndcg@10": 0.002264
+      }
+    }
+  ],
+  "best_config": {
+    "dim": 64,
+    "learning_rate": 0.05,
+    "reg": 0.0001,
+    "epochs": 12,
+    "batch_size": 2048,
+    "batches_per_epoch": 64,
+    "early_stop": 3,
+    "eval_interval": 2,
+    "eval_batch_size": 1024
+  },
+  "final_config": {
+    "dim": 64,
+    "learning_rate": 0.05,
+    "reg": 0.0001,
+    "epochs": 16,
+    "batch_size": 2048,
+    "batches_per_epoch": 64,
+    "early_stop": 4,
+    "eval_interval": 2,
+    "eval_batch_size": 1024
+  },
+  "final_runs": [
+    {
+      "seed": 2020,
+      "config": {
+        "dim": 64,
+        "learning_rate": 0.05,
+        "reg": 0.0001,
+        "epochs": 16,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 4,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 16,
+      "validation_best": {
+        "recall@1": 0.001903,
+        "recall@5": 0.007473,
+        "recall@10": 0.012278,
+        "ndcg@1": 0.001903,
+        "ndcg@5": 0.004658,
+        "ndcg@10": 0.006197
+      },
+      "test": {
+        "recall@1": 0.001903,
+        "recall@5": 0.007218,
+        "recall@10": 0.012886,
+        "ndcg@1": 0.001903,
+        "ndcg@5": 0.004512,
+        "ndcg@10": 0.006335
+      }
+    },
+    {
+      "seed": 2021,
+      "config": {
+        "dim": 64,
+        "learning_rate": 0.05,
+        "reg": 0.0001,
+        "epochs": 16,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 4,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 16,
+      "validation_best": {
+        "recall@1": 0.001844,
+        "recall@5": 0.008257,
+        "recall@10": 0.013514,
+        "ndcg@1": 0.001844,
+        "ndcg@5": 0.005022,
+        "ndcg@10": 0.006714
+      },
+      "test": {
+        "recall@1": 0.001687,
+        "recall@5": 0.007767,
+        "recall@10": 0.013337,
+        "ndcg@1": 0.001687,
+        "ndcg@5": 0.00467,
+        "ndcg@10": 0.006444
+      }
+    },
+    {
+      "seed": 2022,
+      "config": {
+        "dim": 64,
+        "learning_rate": 0.05,
+        "reg": 0.0001,
+        "epochs": 16,
+        "batch_size": 2048,
+        "batches_per_epoch": 64,
+        "early_stop": 4,
+        "eval_interval": 2,
+        "eval_batch_size": 1024
+      },
+      "selected_epoch": 16,
+      "validation_best": {
+        "recall@1": 0.001863,
+        "recall@5": 0.008002,
+        "recall@10": 0.013435,
+        "ndcg@1": 0.001863,
+        "ndcg@5": 0.004937,
+        "ndcg@10": 0.006672
+      },
+      "test": {
+        "recall@1": 0.001961,
+        "recall@5": 0.007375,
+        "recall@10": 0.012906,
+        "ndcg@1": 0.001961,
+        "ndcg@5": 0.004649,
+        "ndcg@10": 0.006415
+      }
+    }
+  ],
+  "aggregate": {
+    "recall@1": [
+      0.00185,
+      0.000118
+    ],
+    "recall@5": [
+      0.007453,
+      0.000231
+    ],
+    "recall@10": [
+      0.013043,
+      0.000208
+    ],
+    "ndcg@5": [
+      0.00461,
+      7e-05
+    ],
+    "ndcg@10": [
+      0.006398,
+      4.6e-05
+    ]
+  },
+  "searec_reference": {
+    "recall@1": 0.007473,
+    "recall@5": 0.026498,
+    "recall@10": 0.041875,
+    "ndcg@5": 0.016934,
+    "ndcg@10": 0.021862,
+    "best_epoch": 62,
+    "log": "logs/etegrec_scientific_20260604_192028.log"
+  }
+}

@@ -13,10 +13,10 @@ generated locally.
 - **`README.md`** (authors' instructions): "You can download the **SASRec embeddings**, pretrained
   RQVAE weights and interaction data used in our paper from
   [Google Drive](https://drive.google.com/drive/folders/1KiPpB7uq7eFc4qB74cFOxhtY3H8nWgAI)."
-- **`DATASET_PROVENANCE_AND_COUNTS.md`**: each dataset is "already **fully preprocessed**
+- **`docs/notes/DATASET_PROVENANCE_AND_COUNTS.md`**: each dataset is "already **fully preprocessed**
   (leave-one-out splits + **SASRec 256-d item embeddings** + pretrained RQ-VAE)"; the data was
   "obtained **pre-processed from the paper authors**, not produced by a local Amazon-2023 pipeline."
-- **`RUN_ETEGREC_NOTES.md`**: "No Sentence-BERT embeddings exist (semantic embeddings here are
+- **`docs/notes/RUN_ETEGREC_NOTES.md`**: "No Sentence-BERT embeddings exist (semantic embeddings here are
   **SASRec**, not SBERT)."
 - **Files on disk** (`numpy` shapes/dtypes verified):
   | file | shape | dtype |
@@ -47,5 +47,5 @@ for d in ["scientific","game","instrument"]:
     a = np.load(f"dataset/{d}/{d}_emb_256.npy", mmap_mode="r")
     print(d, a.shape, a.dtype)
 PY
-grep -n "SASRec" README.md DATASET_PROVENANCE_AND_COUNTS.md RUN_ETEGREC_NOTES.md
+grep -n "SASRec" README.md docs/notes/DATASET_PROVENANCE_AND_COUNTS.md docs/notes/RUN_ETEGREC_NOTES.md
 ```

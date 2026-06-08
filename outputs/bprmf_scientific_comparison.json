@@ -1,0 +1,53 @@
+{
+  "dataset": "scientific",
+  "protocol": {
+    "validation": "valid target, using valid.inter_history as observed training history",
+    "test": "re-fit for selected epochs on test.inter_history, then rank the test target over the full catalog",
+    "retrain_on_valid": true,
+    "seed": 2020
+  },
+  "model": {
+    "name": "bprmf_numpy",
+    "dim": 64,
+    "selected_epoch": 9,
+    "refit_epochs": 9,
+    "epochs_max": 20,
+    "batch_size": 2048,
+    "batches_per_epoch": 64,
+    "learning_rate": 0.05,
+    "reg": 0.0001
+  },
+  "validation_best": {
+    "recall@1": 0.001333,
+    "recall@5": 0.007667,
+    "recall@10": 0.009667,
+    "ndcg@1": 0.001333,
+    "ndcg@5": 0.004289,
+    "ndcg@10": 0.004912
+  },
+  "test_no_history_mask": {
+    "recall@1": 0.001746,
+    "recall@5": 0.005845,
+    "recall@10": 0.009297,
+    "ndcg@1": 0.001746,
+    "ndcg@5": 0.003792,
+    "ndcg@10": 0.004909
+  },
+  "test_with_history_mask": {
+    "recall@1": 0.002177,
+    "recall@5": 0.006237,
+    "recall@10": 0.009689,
+    "ndcg@1": 0.002177,
+    "ndcg@5": 0.004242,
+    "ndcg@10": 0.005365
+  },
+  "searec_reference": {
+    "recall@1": 0.007473,
+    "recall@5": 0.026498,
+    "recall@10": 0.041875,
+    "ndcg@5": 0.016934,
+    "ndcg@10": 0.021862,
+    "best_epoch": 62,
+    "log": "logs/etegrec_scientific_20260604_192028.log"
+  }
+}

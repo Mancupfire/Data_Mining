@@ -1,40 +1,156 @@
-# ETEGRec
+# SEA-Rec
 
-This is the official PyTorch implementation for the paper:
+SEA-Rec is a semantic-enhanced aligned generative sequential recommender built on top of an RQ-VAE item tokenizer and a T5-style encoder-decoder recommender. This repository contains the project code, analysis artifacts, and report for the SEA-Rec course project described in [docs/report/searec_project_report.pdf](/home/hoangnam/Data_Mining/docs/report/searec_project_report.pdf).
 
-> [Generative Recommender with End-to-End Learnable Item Tokenization](https://doi.org/10.1145/3726302.3729989)
+## Project Summary
 
-## Overview
+The project studies a simple question: how do we make discrete item codes useful both for reconstruction and for next-item generation?
 
-We propose **ETEGRec**, a novel **E**nd-**T**o-**E**nd **G**enerative **Rec**ommender that unifies item tokenization and generative recommendation into a cohesive framework. Built on a dual encoder-decoder architecture, ETEGRec consists of an item tokenizer and a generative recommender. To enable synergistic interaction between these components, we propose a recommendation-oriented alignment strategy, which includes two key optimization objectives: sequence-item alignment and preference-semantic alignment. These objectives tightly couple the learning processes of the item tokenizer and the generative recommender, fostering mutual enhancement. Additionally, we develop an alternating optimization technique to ensure stable and efficient end-to-end training of the entire framework.
+SEA-Rec keeps the ETEGRec training backbone, then adds:
 
-![model](./asset/model.png)
+- cyclic co-training between tokenizer and recommender
+- symmetric KL alignment between sequence and target-item code distributions
+- decoder-level contrastive alignment
+- an optional feature-adapter path that injects 256-d item features into the encoder
+
+The item features used here are SASRec collaborative embeddings from the ETEGRec data release, not text embeddings.
+
+## Main Results
+
+Completed full-schedule SEA-Rec runs reported in the project paper:
+
+| Dataset | Recall@10 | NDCG@10 |
+|---|---:|---:|
+| Game | 0.0908 | 0.0479 |
+| Instrument | 0.0603 | 0.0322 |
+| Scientific | 0.0419 | 0.0219 |
+
+Scientific full-catalog comparison against verified baselines:
+
+| Method | Recall@10 | NDCG@10 |
+|---|---:|---:|
+| BPR-MF | 0.0130 | 0.0064 |
+| GRU4Rec | 0.0133 | 0.0069 |
+| SASRec | 0.0136 | 0.0072 |
+| SEA-Rec | 0.0419 | 0.0219 |
+
+The report also documents that all three RQ-VAE codebook levels remain fully utilized on Scientific after training, with zero dead codes.
+
+## Repository Layout
+
+```text
+.
+|-- README.md
+|-- main.py / model.py / trainer.py / data.py / utils.py / vq.py
+|-- config/
+|-- RQVAE/
+|-- scripts/
+|-- baselines/bprmf/
+|-- docs/
+|   |-- report/searec_project_report.pdf
+|   `-- notes/
+|-- notebooks/
+|   |-- SEARec_Data_Analysis.ipynb
+|   `-- exports/
+|-- outputs/
+`-- dataset/              # ignored; add preprocessed data locally
+```
+
+Notes:
+
+- `docs/notes/` stores project notes, provenance checks, validation notes, and codebook analysis writeups.
+- `notebooks/exports/` stores rendered notebook artifacts and derived figures.
+- `baselines/bprmf/` vendors the BPR-MF baseline code used for Scientific comparisons into this repo.
 
 ## Requirements
 
-```
-torch==2.4.0+cu121
+Core training depends on:
+
+```text
+torch
 numpy
 accelerate
 faiss
 tqdm
 scikit-learn
 transformers
+pyyaml
 ```
 
-## Dataset
+Notebook/report helper scripts additionally use `pypdf` and `reportlab`.
 
-You can download the SASRec embeddings, pretrained RQVAE weights and interaction data used in our paper from [Google Drive](https://drive.google.com/drive/folders/1KiPpB7uq7eFc4qB74cFOxhtY3H8nWgAI?usp=sharing) 
+## Data
 
+This repo does not track the datasets or checkpoints. Put the preprocessed ETEGRec release under `dataset/`, with per-dataset files such as:
 
-## RQVAE Pretrain
-```shell
+- `dataset/scientific/scientific.train.jsonl`
+- `dataset/scientific/scientific.valid.jsonl`
+- `dataset/scientific/scientific.test.jsonl`
+- `dataset/scientific/scientific_emb_256.npy`
+- `dataset/scientific/256-512-256-128.rqvae.pth`
+
+The same layout applies to `game` and `instrument`.
+
+## Training
+
+Scientific:
+
+```bash
+bash run.sh
+```
+
+Game:
+
+```bash
+bash run_game.sh
+```
+
+Manual launch example:
+
+```bash
+accelerate launch --config_file accelerate_config_ddp.yaml main.py \
+  --config ./config/scientific.yaml \
+  --lr_rec=0.005 \
+  --lr_id=0.0001 \
+  --cycle=2
+```
+
+RQ-VAE pretraining:
+
+```bash
 cd RQVAE
 bash run_pretrain.sh
 ```
 
-## Train
+## Baselines And Analysis
 
-```shell
-bash run.sh
+Scientific BPR-MF suite:
+
+```bash
+python baselines/bprmf/src/run_scientific_baseline_suite.py
 ```
+
+Single Scientific BPR-MF comparison run:
+
+```bash
+python baselines/bprmf/src/compare_scientific_searec.py
+```
+
+Data and codebook analysis:
+
+```bash
+python scripts/analyze_recommendation_data.py
+python scripts/analyze_codebook_utilization.py --config ./config/scientific.yaml --tag before
+python scripts/plot_codebook_utilization.py
+```
+
+Notebook export helpers:
+
+```bash
+python scripts/export_notebook_outputs.py notebooks/SEARec_Data_Analysis.ipynb --output-dir notebooks/exports/SEARec_Data_Analysis_exports
+python scripts/convert_ipynb_to_rmd.py notebooks/SEARec_Data_Analysis.ipynb --output notebooks/exports/SEARec_Data_Analysis_full.Rmd
+```
+
+## Current Repo Status
+
+The report covers Game, Instrument, and Scientific. The runnable configs shipped in this repo currently include `scientific` and `game`. Instrument metrics and analysis artifacts are preserved in the report and outputs, but an `config/instrument.yaml` rerun configuration is not currently included.
